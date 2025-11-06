@@ -108,6 +108,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                     : List.generate(_vehiculos.length, (index) {
                       final transporte = _vehiculos[index];
                        final ordenVehi = _orden[index];
+                       final clienteV = _cliente[index];
 
                       return DataRow(
                         cells: [
@@ -147,7 +148,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                               onSelected: (value) {
                                 final rutas = {
                                   'Abonar': AbonoScreen(
-                                    nombre: 'Pedro A.',
+                                    nombre: clienteV.nombre,
                                     vehiculo: transporte.tipo,
                                     ingreso: ordenVehi.fechaIngreso,
                                     salidaEstimada: ordenVehi.posibleEntrega,

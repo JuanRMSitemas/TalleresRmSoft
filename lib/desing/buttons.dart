@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class Buttons extends StatelessWidget {
   final String text;
@@ -18,7 +19,11 @@ class Buttons extends StatelessWidget {
       width: double.infinity, 
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? Theme.of(context).primaryColor,
+          backgroundColor: AppColors.BackgroundButton,
+          foregroundColor: AppColors.BackgrounLight,
+          textStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         onPressed: onPressed,
         child: Text(text),

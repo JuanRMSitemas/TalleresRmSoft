@@ -1,10 +1,11 @@
  import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
-import 'package:talleres/desing/app_colors.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart';
-import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
+//import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
+//import 'package:talleres/desing/app_colors.dart';
+import 'package:intl/intl.dart';
 
 
 class AbonoScreen extends StatelessWidget {
@@ -20,9 +21,9 @@ class AbonoScreen extends StatelessWidget {
     super.key, 
     required this.nombre, 
     required this.vehiculo, 
+    required this.placa, 
     required this.ingreso, 
     required this.salidaEstimada, 
-    required this.placa, 
     required this.procesos, 
     required this.metodoPago});
 
@@ -41,6 +42,7 @@ class AbonoScreen extends StatelessWidget {
   }
 
   Padding datosCliente() {
+    final double valorTotal = 200000; //Valoor de los procesos
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -49,56 +51,139 @@ class AbonoScreen extends StatelessWidget {
           Text( nombre, //nombre que se ingresa en el formulario
             style:  TextStyles.h1
           ),
-          Text("$vehiculo - $placa", //vehicuolo y placa
-          style: TextStyles.bodyText ),
           Text(
-            formatFecha(DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+            "$vehiculo - $placa", //vehicuolo y placa
+            style: TextStyles.h3,
           ),
-          Text(
-            'salidaEstimada'
+
+          //Fechas de ingreso y estimado de salida -----------------------------
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [const Text( 
+                  "Ingreso",
+                  style: TextStyles.h4
+                ),
+                Text(
+                  DateFormat('dd/MM/yy HH:mm').format(ingreso ?? DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
+                ),
+              ]),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [const Text( 
+                  "Salida estimada",
+                  style: TextStyles.h4
+                ),
+                Text(
+                  formatFecha(salidaEstimada), //guarda la fecha de ingreso en .fechaIngreso
+                ),
+              ]),
+            ]
           ),
-          //Text(tra),
+          
+          //Recuadro con servicios -------------
           Expanded( // cuerpo de recuadro
             child: Padding(
-              padding: const EdgeInsets.only(top: 18),
+              padding: const EdgeInsets.only(top: 8),
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(108, 150, 148, 142),
+                  color: const Color.fromARGB(57, 167, 164, 157),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [ Text(nombre),
-
-                      const SizedBox(height: 10),
-
-                      // Listado plegable
-                      ExpansionTile(
-                        title: const Text(
-                          'Procesos del Vehículo',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        children: const [
-                          ListTile(
-                            leading: Icon(Icons.build),
-                            title: Text('Diagnóstico'),
-                            subtitle: Text('Revisión inicial del vehículo'),
+                    children: [
+                      const SizedBox(height: 4),
+                      //fila principal servicios + valor
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                           // Columna izquierda: Servicios expandibles
+                          Expanded(
+                            flex: 2,
+                            child: ExpansionTile(
+                              title: const Text(
+                                'Servicios',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              children: const [
+                                ListTile(
+                                  title: Text('Diagnóstico'),
+                                ),
+                              ],
+                            ),
                           ),
-                          ListTile(
-                            leading: Icon(Icons.settings),
-                            title: Text('Reparación'),
-                            subtitle: Text('Procedimientos mecánicos y técnicos'),
-                          ),
-                          ListTile(
-                            leading: Icon(Icons.check_circle),
-                            title: Text('Entrega'),
-                            subtitle: Text('Vehículo listo para recoger'),
+
+                          // Columna derecha: valor total
+                          Expanded(
+                            flex: 1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 16),
+                              child: Text(
+                                '\$${valorTotal.toStringAsFixed(0)}',
+                                textAlign: TextAlign.center,
+                                style: TextStyles.h2,
+                              ),
+                            ),
                           ),
                         ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded( // cuerpo de recuadro con metodos de pago
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(110, 176, 187, 194),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 4),
+                      //fila principal servicios + valor
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                           // Columna izquierda: Servicios expandibles
+                          Expanded(
+                            flex: 2,
+                            child: ExpansionTile(
+                              title: const Text(
+                                'Servicios',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              children: const [
+                                ListTile(
+                                  title: Text('Diagnóstico'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+
+                        ],
+
                       ),
                     ],
                   ),
