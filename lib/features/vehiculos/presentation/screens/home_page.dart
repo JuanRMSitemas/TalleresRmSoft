@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
-import '../domain/vehiculo.dart';
+import '../../domain/vehiculo.dart';
 import 'ingreso_vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
@@ -154,7 +154,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     salidaEstimada: ordenVehi.posibleEntrega,
                                     placa: transporte.placa,
                                     procesos: [],
-                                    metodoPago:'Efectivo',
+                                    metodoPago:[],
                                   ),
                                   'reparacion': TrabajoScreen(),
                                 };
@@ -207,19 +207,11 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     ],
                                   ),
                                 ),
-                                const PopupMenuItem(
-                                  value: 'Naranja',
-                                  child: Text('En Taller'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'Verde',
-                                  child: Text('Listo'),
-                                ),
                               ],
                               child: Container( //Resaltar de color segun el estado
                                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: transporte.estado == false
+                                  color: transporte.estado
                                       ? const Color.fromARGB(134, 255, 153, 0)
                                       : const Color.fromARGB(125, 76, 175, 79),
                                   borderRadius: BorderRadius.circular(6),

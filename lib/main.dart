@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/features/settings/presentation/settings_page.dart';
-import 'package:talleres/features/vehiculos/presentation/home_page.dart';
-import 'package:talleres/features/vehiculos/presentation/ingreso_vehiculo.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/ingreso_vehiculo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:talleres/features/vehiculos/domain/cliente.dart'; // ignore: unused_import
 import 'package:talleres/features/vehiculos/domain/vehiculo.dart';// ignore: unused_import
