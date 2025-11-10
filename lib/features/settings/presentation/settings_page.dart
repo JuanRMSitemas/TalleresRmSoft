@@ -9,9 +9,10 @@ class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
+
 class _SettingsPageState extends State<SettingsPage> {
   bool _isDarkMode = false; // Estado para el modo oscuro
-  String _language= "es";
+  //String _language= "es";
   double _fontSize = 16.0; // Estado para el tamaño de letra (inicial en 16)
 
   @override
@@ -19,7 +20,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return CustomScaffold(
       title: 'CONFIGURACÍON',
       selectedIndex: 1,
-       onTabSelected: (i) {
+      onTabSelected: (i) {
         // Navegación desde el BottomNav
         if (i == 0) Navigator.pushReplacementNamed(context, '/');
         if (i == 1) Navigator.pushReplacementNamed(context, '/settings');

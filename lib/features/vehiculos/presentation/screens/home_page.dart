@@ -156,7 +156,15 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     procesos: [],
                                     metodoPago:[],
                                   ),
-                                  'reparacion': TrabajoScreen(),
+                                  'reparacion': TrabajoScreen(
+                                    nombre: clienteV.nombre,
+                                    vehiculo: transporte.tipo,
+                                    ingreso: ordenVehi.fechaIngreso,
+                                    salidaEstimada: ordenVehi.posibleEntrega,
+                                    placa: transporte.placa,
+                                    procesos: [],
+                                    metodoPago:[],
+                                  ),
                                 };
                                 final destino = rutas[value];
                                 if(destino != null){
