@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const VehiculosScreen(), // ruta principal
         '/settings': (context) => const SettingsPage(),
         '/ingresoVehiculo': (context) => IngresoVehiculoScreen(
-          onVehiculoIngresado: (placa, vehiculo, fechaIngreso) {
-          debugPrint('Vehículo ingresado: $placa - $vehiculo - $fechaIngreso');
+          onVehiculoIngresado: (cliente, vehiculo, orden, proceso ) {
+          debugPrint('Vehículo ingresado');
         },
         ),
         // '/Abonar':(context) => AbonoScreen(),
@@ -45,3 +45,11 @@ void main() {
     home: MyApp(),
   ));
 }
+
+// '/ingresoVehiculo': (context) => IngresoVehiculoScreen(
+//   onVehiculoIngresado: (cliente, vehiculo, orden, proceso) {
+//     debugPrint(
+//       'Vehículo ingresado: ${vehiculo.placa} - Cliente: ${cliente.nombre} - Orden: ${orden.id}',
+//     );
+//   },
+// ),

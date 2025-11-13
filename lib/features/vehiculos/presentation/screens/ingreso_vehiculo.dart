@@ -5,6 +5,7 @@ import 'package:talleres/desing/app_colors.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/features/vehiculos/domain/cliente.dart';
+import 'package:talleres/features/vehiculos/domain/procesos.dart';
 import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
 
@@ -15,6 +16,7 @@ class IngresoVehiculoScreen extends StatefulWidget {
     Cliente cliente,
     Vehiculo vehiculo,
     Orden orden,
+    Procesos proceso,
   )
   onVehiculoIngresado;
 
@@ -37,7 +39,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   final TextEditingController _correoController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _marcaController = TextEditingController();
-  String procesoSelec = 'Seleccione proceso';
+  String _procesoSelec = 'Seleccione proceso';
   DateTime _fechaSeleccionada  = DateTime.now();
   final TextEditingController _notasController = TextEditingController();
   final List<String> _tiposId = ['CC', 'NIT', 'Otro'];
@@ -72,7 +74,12 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         notas: _notasController.text
       );
 
-      widget.onVehiculoIngresado(cliente, vehiculo, orden);
+      final proceso = Procesos(
+        nombre: _procesoSelec,
+        valor: 0,
+      );
+
+      widget.onVehiculoIngresado(cliente, vehiculo, orden, proceso);
       Navigator.pop(context);
     }
   }
@@ -110,12 +117,10 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                     child: DropdownButtonFormField<String>(
                       initialValue: _tipoSelecId,
                       hint: const Text('Seleccione el Id'),
-                      items: _tiposId
-                          .map(
-                            (tipo) =>
-                                DropdownMenuItem(value: tipo, child: Text(tipo)),
-                          )
-                          .toList(),
+                      items: _tiposId.map(
+                        (tipo) =>
+                        DropdownMenuItem(value: tipo, child: Text(tipo)),
+                      ).toList(),
                       onChanged: (value) {
                         setState(() => _tipoSelecId = value!);
                       },
@@ -144,7 +149,6 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-
               Row(
                 children: [
                   //Grupo "tipo de veiculo"
@@ -269,15 +273,15 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
 
               //Procesos a  vehiculo
               DropdownButtonFormField<String>(
-                initialValue: procesoSelec,
-                hint: const Text('Servicios'),
+                initialValue: _procesoSelec,
+                hint: const Text(''),
                 items: _tipoProcesos
                     .map(
                       (tipo) => DropdownMenuItem(value: tipo, child: Text(tipo)),
                     )
                     .toList(),
                 onChanged: (value) {
-                  setState(() => procesoSelec = value!);
+                  setState(() => _procesoSelec = value!);
                 },
                 decoration: const InputDecoration(
                   labelText: 'Seleccione un proceso',

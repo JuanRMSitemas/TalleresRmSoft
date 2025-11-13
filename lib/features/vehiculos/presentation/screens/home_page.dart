@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
+import 'package:talleres/features/vehiculos/domain/procesos.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
 import '../../domain/vehiculo.dart';
@@ -20,6 +21,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
   final List<Cliente> _cliente = [];
   final List<Vehiculo> _vehiculos = [];
   final List<Orden> _orden = []; 
+  final List<Procesos> _proceso = [];
   int selectedIndex = 0;
 
   void _onTabSelected(int index) {
@@ -41,11 +43,12 @@ class VehiculosScreenState extends State<VehiculosScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => IngresoVehiculoScreen(
-          onVehiculoIngresado: (Cliente cliente, Vehiculo vehiculo, Orden orden) {
+          onVehiculoIngresado: (Cliente cliente, Vehiculo vehiculo, Orden orden, Procesos proceso) {
             setState(() {
               _cliente.add(cliente);
               _vehiculos.add(vehiculo);
               _orden.add(orden);
+              _proceso.add(proceso);
             });
           },
         ),
@@ -164,6 +167,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     placa: transporte.placa,
                                     procesos: [],
                                     metodoPago:[],
+                                    costo: ordenVehi.costo,
                                   ),
                                 };
                                 final destino = rutas[value];

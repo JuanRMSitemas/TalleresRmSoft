@@ -7,10 +7,10 @@ class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  SettingsPageState createState() => SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageState extends State<SettingsPage> {
   bool _isDarkMode = false; // Estado para el modo oscuro
   //String _language= "es";
   double _fontSize = 16.0; // Estado para el tamaño de letra (inicial en 16)

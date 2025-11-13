@@ -5,6 +5,7 @@ class Orden {
   final DateTime? fechaEntrega;
   final String notas;
   final String metodoPago;
+  final double costo;
 
 
   Orden({
@@ -14,5 +15,6 @@ class Orden {
     this.fechaEntrega,
     required this.notas,
     this.metodoPago = '',
+    this.costo = 0,
   });
 }
