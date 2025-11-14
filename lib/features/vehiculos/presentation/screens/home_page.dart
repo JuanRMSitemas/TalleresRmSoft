@@ -8,7 +8,7 @@ import 'ingreso_vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
 import 'package:talleres/features/vehiculos/domain/cliente.dart';
-//import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
+import 'package:talleres/desing/text_style.dart';
 
 class VehiculosScreen extends StatefulWidget {
   const VehiculosScreen({super.key});
@@ -91,10 +91,10 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                   child: DataTable(
                     columnSpacing: 0, // Espacio entre columnas (puedes ajustar)
                     columns: const [
-                      DataColumn(label: Text('Placa')),
-                      DataColumn(label: Text('Vehículo')),
-                      DataColumn(label: Text('Ingreso')),
-                      DataColumn(label: Text('Estado')),
+                      DataColumn(label: Text('Placa',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Vehículo',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Ingreso',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Estado',style: TextStyles.h4,)),
                       DataColumn(label: Text('')),
                     ],
                     rows: _vehiculos.isEmpty
