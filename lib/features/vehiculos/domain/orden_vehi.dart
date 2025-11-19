@@ -13,7 +13,7 @@ class Orden {
     required this.fechaIngreso,
     required this.posibleEntrega,
     this.fechaEntrega,
-    required this.notas,
+    this.notas = '',
     this.metodoPago = '',
     this.costo = 0,
   });

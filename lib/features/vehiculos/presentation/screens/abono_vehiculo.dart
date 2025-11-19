@@ -13,7 +13,7 @@ class AbonoScreen extends StatefulWidget {
   final String vehiculo;
   final String placa;
   final DateTime? ingreso;
-  final DateTime salidaEstimada;
+  final DateTime? salidaEstimada;
   final List<Procesos> procesos;
   final List<String> metodoPago;
 
@@ -86,7 +86,7 @@ class _AbonoScreenState extends State<AbonoScreen> {
                   style: TextStyles.h4
                 ),
                 Text(
-                  formatFecha(widget.salidaEstimada), //guarda la fecha de ingreso en .fechaIngreso
+                  formatFecha(widget.salidaEstimada ?? DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
                 ),
               ]),
             ]

@@ -13,7 +13,7 @@ class TrabajoScreen extends StatefulWidget {
   final String nombre;
   final String vehiculo;
   final String placa;
-  final DateTime? ingreso;
+  final DateTime ingreso;
   final DateTime salidaEstimada;
   final List<Procesos> procesos;
   final List<String> metodoPago;

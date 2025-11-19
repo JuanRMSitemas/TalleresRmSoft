@@ -1,259 +1,338 @@
-// import 'package:flutter/material.dart';
-// import 'package:talleres/core/widgets/custom_scaffold.dart';
-// import 'package:talleres/desing/text_style.dart';
-// import 'package:talleres/desing/buttons.dart'; 
-// import 'package:talleres/desing/date_extensions.dart'; //format para fecha
-// import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
-// import 'package:intl/intl.dart';
-// import 'package:talleres/desing/spacing_responsive.dart';
-// import 'package:flutter/material.dart';
-// import 'package:talleres/features/vehiculos/domain/procesos.dart';
-// import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
-// import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
-// import '../../domain/vehiculo.dart';
-// import 'ingreso_vehiculo.dart';
-// import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
-// import 'package:talleres/features/vehiculos/domain/cliente.dart';
+import 'dart:typed_data';
 
-// class EntregarVehiculo extends StatefulWidget {
-//   const EntregarVehiculo({super.key});
+import 'package:flutter/material.dart';
+import 'package:signature/signature.dart';
+import 'package:talleres/core/widgets/custom_scaffold.dart';
+import 'package:talleres/desing/buttons.dart';
+import 'package:talleres/desing/text_style.dart';
+import 'package:talleres/desing/date_extensions.dart'; //format para fecha
+import 'package:intl/intl.dart';
+import 'package:talleres/desing/spacing_responsive.dart';
+import 'package:talleres/features/vehiculos/domain/procesos.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
+import '../../domain/vehiculo.dart';
+import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
+import 'package:talleres/features/vehiculos/domain/cliente.dart';
 
-//   @override
-//   EntregarVehiculoState createState() => EntregarVehiculoState();
-// }
-// class EntregarVehiculoState extends State<EntregarVehiculo> {
-//   final List<Cliente> _cliente = [];
-//   final List<Vehiculo> _vehiculos = [];
-//   final List<Orden> _orden = []; 
-//   final List<Procesos> _proceso = [];
+class EntregarVehiculo extends StatefulWidget {
+  final String nombre;
+  final String celular;
+  final String correo;
+  final String vehiculo;
+  final String placa;
+  final DateTime? ingreso;
+  final DateTime salidaEstimada;
+  final List<Procesos> procesos;
+  final List<String> metodoPago;
+  final String notas;
+  final double valorTotal;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return CustomScaffold(
-//       title: 'ABONO',
-//       selectedIndex: 0,
-//       onTabSelected: (i) {
-//         // Navegación desde el BottomNav
-//         if (i == 0) Navigator.pushReplacementNamed(context, '/');
-//         if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-//       },
-//       body: datosCliente(),
-//     );
-//   }
+  const EntregarVehiculo({
+    super.key,
+    required this.nombre,
+    required this.celular,
+    required this.correo,
+    required this.vehiculo,
+    required this.placa,
+    required this.ingreso,
+    required this.salidaEstimada,
+    required this.procesos,
+    required this.metodoPago,
+    required this.notas,
+    required this.valorTotal,
+  });
 
-//   Padding datosCliente() {
-//     double total = _proceso.fold(0, (sum, p) => sum + p.valor);
-//     final formato = NumberFormat("#,##0.00", "es_CO");
-//     //String metodoPagos = '';
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: [
-//           Text( widget, //nombre que se ingresa en el formulario
-//             style:  TextStyles.h1
-//           ),
-//           Text(
-//             "${widget.vehiculo} - ${widget.placa}", //vehicuolo y placa
-//             style: TextStyles.h3,
-//           ),
-//           //Fechas de ingreso y estimado de salida -----------------------------
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               Column(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [const Text( 
-//                   "Ingreso",
-//                   style: TextStyles.h4
-//                 ),
-//                 Text(
-//                   DateFormat('dd/MM/yy HH:mm').format(widget.ingreso ?? DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
-//                 ),
-//               ]),
-//               Column(
-//                 mainAxisAlignment: MainAxisAlignment.end,
-//                 children: [const Text( 
-//                   "Salida estimada",
-//                   style: TextStyles.h4
-//                 ),
-//                 Text(
-//                   formatFecha(widget.salidaEstimada), //guarda la fecha de ingreso en .fechaIngreso
-//                 ),
-//               ]),
-//             ]
-//           ),
-//           SizedBox(
-//             height: 15,
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.start,
-//             //crossAxisAlignment: CrossAxisAlignment.end,
-//             spacing: 160,
-//             children: [
-//               Column(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 children: [const Text( 
-//                   "Proceso",
-//                   style: TextStyles.h4
-//                 ),
-//               ]),
-//               Column(
-//                 mainAxisAlignment: MainAxisAlignment.end,
-//                 children: [const Text( 
-//                   "Valor",
-//                   style: TextStyles.h4
-//                 ),
-//               ]),
-//             ]
-//           ),
-//           //Recuadro con Procesos realizados -------------
-//           Expanded( // cuerpo de recuadro Servicios o Procesos
-//             child: ListView.builder(
-//               itemCount: widget.procesos.length,
-//               itemBuilder: (context,index) {
-//                 final proceso = widget.procesos[index];
-//                 return Card(
-//                   //margin: const EdgeInsets.symmetric(vertical: 5),
-//                   elevation: 1,
-//                   child: Padding(
-//                     padding: const EdgeInsets.all(8.0),
-//                     child: Row(
-//                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                       children: [
-//                         // Nombre del proceso
-//                         Expanded(
-//                           flex: 2,
-//                           child: Row(
-//                             children: [
-//                               Expanded(
-//                                 child: Text(
-//                                   proceso.nombre,
-//                                   overflow: TextOverflow.ellipsis,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                         Expanded(
-//                           flex: 1,
-//                           child: Row(
-//                             children: [
-//                               Expanded(
-//                                 child: Text(
-//                                   ('\$ ${proceso.valor.toStringAsFixed(0)}'),
-//                                   overflow: TextOverflow.ellipsis,
-//                                 ),
-//                               ),
-//                             ],
-//                           ),
-//                         ),
-//                       ]
-//                     )
-//                   )                  
-//                 );
-//               }
-//             ),
-//           ),
-//           Row(
-//             children: [
-//               // Columna izquierda con padding
-//               Padding(
-//                 padding: const EdgeInsets.only(left: 15.0),
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: const [
-//                     Text(
-//                       "Total",
-//                       style: TextStyles.h4Color,
-//                     ),
-//                   ],
-//                 ),
-//               ),
+  // const EntregarVehiculo({super.key});
 
-//               // Espaciador flexible que empuja la segunda columna
-//               const Spacer(flex: 2),
-              
-//               // Columna derecha (más hacia el centro)
-//               Expanded(
-//                 flex: 2,
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       '\$ ${formato.format(total)}',
-//                       style: TextStyles.h4Color,
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//           Expanded( // cuerpo de recuadro con metodos de pago
-//             child: Padding(
-//               padding: AppSpacing.screenPadding(context, ),
-//               child: Container(
-//                 width: double.infinity,
-//                 height: double.infinity,
-//                 decoration: BoxDecoration(
-//                   color: const Color.fromARGB(110, 176, 187, 194),
-//                   borderRadius: BorderRadius.circular(8),
-//                 ),
-//                 child: SingleChildScrollView(
-//                   child: Column(
-//                     children: [
-//                       const SizedBox(height: 10),
-//                       const Text('Método de pago:', style: TextStyles.h4),
-//                       Padding(
-//                         padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
-//                         child: DropdownButton<String>(
-//                           value: metodoPagoSelec == 'Seleccione el método de pago' ? null : metodoPagoSelec,
-//                           hint: const Text('Seleccione el método de pago'),
-//                           isExpanded: true,
-//                           items: metodoPago.map((String metodo) {
-//                             return DropdownMenuItem<String>(
-//                               value: metodo,
-//                               child: Text(metodo),
-//                             );
-//                           }).toList(),
-//                           onChanged: (String? value) {
-//                             setState(() {
-//                               metodoPagoSelec = value!;
-//                             });
-//                           },
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
+  @override
+  EntregarVehiculoState createState() => EntregarVehiculoState();
+}
+class EntregarVehiculoState extends State<EntregarVehiculo> {
+  final List<Cliente> _cliente = [];
+  final List<Vehiculo> _vehiculos = [];
+  final List<Orden> _orden = []; 
+  final List<Procesos> _proceso = [];
+  
+  final TextEditingController _notasfinal = TextEditingController();
+  final SignatureController _firmaController = SignatureController(
+  penStrokeWidth: 2,
+  penColor: Colors.black,
+  exportBackgroundColor: const Color.fromARGB(255, 255, 249, 211),
+  );
+  
+  get metodoPagoSelec => null;
 
-//           SizedBox(
-//             height: 50,
-//             width: double.infinity,
-//             child: Buttons(
-//               text: 'Guardar',
-//               onPressed: () {
-//                 if(metodoPagoSelec=='Seleccione un metodo de pago'){
-//                   ScaffoldMessenger.of(context).showSnackBar(
-//                     const SnackBar(content: Text('Selecciona el metodo de pago')),
-//                   );
-//                   return;
-//                 }
-//                 Navigator.pushReplacement(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => const VehiculosScreen()
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
-//       )
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return CustomScaffold(
+      title: 'FINALIZAR',
+      selectedIndex: 0,
+      onTabSelected: (i) {
+        // Navegación desde el BottomNav
+        if (i == 0) Navigator.pushReplacementNamed(context, '/');
+        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
+      },
+      body: datosCliente(),
+    );
+  }
 
+  Widget datosCliente() {
+  double total = _proceso.fold(0, (sum, p) => sum + p.valor);
+  final formato = NumberFormat("#,##0.00", "es_CO");
+  String metodoPagos = '';
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text( 'Taller', //nombre que se ingresa en el formulario
+              style:  TextStyles.h1
+            ),
+            Text( 'CL 24 # 7-29', //nombre que se ingresa en el formulario
+              style:  TextStyles.h2
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [ Text(
+                    widget.nombre,
+                    style: TextStyles.h2,
+                    ),
+                    Text(
+                      "Cel: ${widget.celular}",
+                      style: TextStyles.h4,
+                    ),
+                    Text(
+                      "Correo: ${widget.correo}",
+                      style: TextStyles.h4,
+                    )
+                  ]
+                )
+              ]
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [ //INGRESO Y SALIDA F/H
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text( 
+                    "Ingreso",
+                    style: TextStyles.h4
+                    ),
+                  Text(
+                    DateFormat('dd/MM/yy HH:mm').format(widget.ingreso ?? DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
+                  ),
+                  ]
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [const Text( 
+                    "Salida estimada",
+                    style: TextStyles.h4
+                  ),
+                  Text(
+                    formatFecha(widget.salidaEstimada), //guarda la fecha de ingreso en .fechaIngreso
+                  ),
+                  ]
+                ),
+              ]
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              Text(
+                    "Notas: ", //"${widget.vehiculo} - ${widget.placa}", //vehicuolo y placa
+                    style: TextStyles.h4,
+                  ),
+              Text(widget.notas)
+              ],
+            ),
+            Row(
+              children: [
+                // Columna izquierda (Detalle)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Detalle",
+                        style: TextStyles.h4,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Columna del ícono (solo ocupa el espacio necesario)
+                Column(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.camera_alt, color: Color.fromARGB(255, 25, 43, 94)),
+                      tooltip: 'Foto de Detalle',
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+
+                // Columna derecha (Valor)
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: const [
+                      Text(
+                        "Valor",
+                        style: TextStyles.h4,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            //Recuadro con Procesos realizados -------------
+            ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text(
+              "",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _proceso.length,
+                itemBuilder: (context, index) {
+                  final proceso = _proceso[index];
+                  return Card(
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              proceso.nombre,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              '\$ ${proceso.valor.toStringAsFixed(0)}',
+                              textAlign: TextAlign.right,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+            Row(
+              children: [
+                // Columna izquierda con padding
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Total",
+                        style: TextStyles.h4Color,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Espaciador flexible que empuja la segunda columna
+                const Spacer(flex: 2),
+                
+                // Columna derecha (más hacia el centro)
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '\$ ${formato.format(total)}',
+                        style: TextStyles.h4Color,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10,),
+            //Notas
+            TextFormField(
+              controller:
+                _notasfinal, //----------------------------------------------XXXXXXXXXXXXXXXXXXX
+              decoration: const InputDecoration(
+                labelText: 'Notas',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text('Firma quien recibe:'),
+                  ]
+                ),
+                Column(                
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete_rounded, color: Colors.red),
+                      tooltip: 'Eliminar',
+                      onPressed:(){
+                        _firmaController.clear();
+                      }
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox( //Firma quien recibe el vehiculo /dueño u otro
+              height: 135,
+              child: Signature(
+                controller: _firmaController,
+                width: double.infinity,
+                backgroundColor: Colors.amber[50]!,
+              ),
+            ),
+            SizedBox(height: 10),
+            SizedBox(
+              height: 50,
+              width: double.infinity,
+              child: Buttons(
+                text: 'Guardar',
+                onPressed: () async {
+                    // Exporta la firma a bytes (Uint8List)
+                    final Uint8List? firmaBytes = await _firmaController.toPngBytes();
+
+                    if (firmaBytes != null) {
+                      // Aquí puedes guardarla en base de datos, local storage o enviarla por API
+                      print("Firma capturada: ${firmaBytes.length} bytes");
+                    }
+                  },
+              ),
+            ),
+          ],
+        ),
+      )
+    );
+  }
+}

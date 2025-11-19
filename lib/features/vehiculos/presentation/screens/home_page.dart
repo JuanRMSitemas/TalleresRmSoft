@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/entregar_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
 import '../../domain/vehiculo.dart';
 import 'ingreso_vehiculo.dart';
@@ -169,6 +170,19 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     metodoPago:[],
                                     costo: ordenVehi.costo,
                                   ),
+                                  'entregas': EntregarVehiculo(
+                                    nombre: clienteV.nombre,
+                                    celular: clienteV.celular,
+                                    correo: clienteV.email,
+                                    vehiculo: transporte.tipo,
+                                    ingreso: ordenVehi.fechaIngreso,
+                                    salidaEstimada: ordenVehi.posibleEntrega,
+                                    placa: transporte.placa,
+                                    procesos: [],
+                                    metodoPago:[],
+                                    notas: ordenVehi.notas,
+                                    valorTotal: 0,
+                                  )
                                 };
                                 final destino = rutas[value];
                                 if(destino != null){
@@ -200,12 +214,12 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   ),
                                 ),
                                 PopupMenuItem(
-                                  value: 'Entregas',
+                                  value: 'entregas',
                                   child: Row(
                                     children: const [
-                                      Icon(Icons.check_circle, color: Color.fromARGB(255, 26, 61, 216)),
+                                      Icon(Icons.check_circle, color: Color.fromARGB(255, 62, 92, 224)),
                                       SizedBox(width: 4),
-                                      Text('Fin')
+                                      Text('Finalizado')
                                     ],
                                   ),
                                 ),
@@ -229,7 +243,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text( 
-                                  transporte.estado ? 'En Taller' : 'Listo',  // Lógica del booleano: true = 'En Taller', false = 'Listo'
+                                  transporte.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
                                   style: TextStyle(
                                     color: transporte.estado  // true = En Taller (naranja), false = Listo (verde)
                                         ? Colors.orange[900]

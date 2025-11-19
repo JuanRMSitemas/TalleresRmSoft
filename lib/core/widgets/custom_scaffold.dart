@@ -25,7 +25,6 @@ class CustomScaffold extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           title,
-          // textAlign:TextAlign.center,
           style: TextStyle(
           fontWeight: FontWeight.bold
           ),
