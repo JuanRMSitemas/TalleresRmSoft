@@ -4,9 +4,9 @@ import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
-import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';// ignore: unused_import
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:io';// ignore: unused_import
 
 
 class TrabajoScreen extends StatefulWidget {
@@ -323,7 +323,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                   style: TextStyles.h4
                 ),
                 Text(
-                  DateFormat('dd/MM/yy HH:mm').format(widget.ingreso ?? DateTime.now()), //guarda la fecha de ingreso en .fechaIngreso
+                  DateFormat('dd/MM/yy HH:mm').format(widget.ingreso), //guarda la fecha de ingreso en .fechaIngreso
                 ),
               ]),
               Column(
@@ -472,19 +472,18 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 );
                  // Verifica la respuesta del usuario
                 if (confirmar == true) {
-                  Navigator.push(
+                  Navigator.pushNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => AbonoScreen(
-                        nombre: widget.nombre,
-                        vehiculo: widget.vehiculo,
-                        placa: widget.placa,
-                        ingreso: widget.ingreso,
-                        salidaEstimada: widget.salidaEstimada,
-                        procesos: _proceso, // 👈 pasa la lista actual de procesos
-                        metodoPago: const [], // o la lista real que uses
-                      ),
-                    ),
+                    '/Abonar',
+                    arguments: {
+                      'nombre': widget.nombre,
+                      'vehiculo': widget.vehiculo,
+                      'placa': widget.placa,
+                      'ingreso': widget.ingreso,
+                      'salidaEstimada': widget.salidaEstimada,
+                      'procesos': _proceso, // 👈 pasa la lista actual de procesos
+                      'metodoPago': const [], // o la lista real que uses
+                    }
                   );
                 }
               },            

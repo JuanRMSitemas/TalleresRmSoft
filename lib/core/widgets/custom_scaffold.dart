@@ -8,7 +8,8 @@ class CustomScaffold extends StatelessWidget {
   final ValueChanged<int>? onTabSelected;
   final bool showDrawer;
   final Widget? floatingActionButton; // 👈  parámetro
-
+//Relacionados con el bottom nav bar
+//buttom crea una nueva vista
   const CustomScaffold({
     super.key,
     required this.title,
@@ -41,12 +42,12 @@ class CustomScaffold extends StatelessWidget {
         : null,
       ),
       drawer: showDrawer
-        ?Drawer(
+        ?Drawer( 
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
-                decoration: BoxDecoration(color: Color.fromARGB(255, 0, 0, 0)),
+                decoration: BoxDecoration(color: Color.fromARGB(255, 230, 187, 0)),
                 child: Text(
                   'Menú',
                   style: TextStyle(color: Colors.white, fontSize: 28),
@@ -57,7 +58,10 @@ class CustomScaffold extends StatelessWidget {
                 title: const Text('En Taller'),
                 onTap: () {
                   // Reemplaza para evitar apilar pantallas
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/'),
+                    );
                 },
               ),
               ListTile(
@@ -112,21 +116,11 @@ class CustomScaffold extends StatelessWidget {
         floatingActionButton,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
-        onTap: (index) {
-          if (onTabSelected != null) onTabSelected!(index);
-          // Si quieres navegar por rutas desde el bottom nav, podrías:
-          // if (index == 0) Navigator.pushReplacementNamed(context, '/');
-        },
-        selectedItemColor: const Color.fromARGB(255, 103, 173, 82),
+        onTap: onTabSelected,
+        selectedItemColor: const Color.fromARGB(255, 230, 168, 0),
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configuración',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home),label: 'Inicio',),
+          BottomNavigationBarItem(icon: Icon(Icons.settings),label: 'Configuración',),
         ],
       ),
     );

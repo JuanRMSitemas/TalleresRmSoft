@@ -7,9 +7,9 @@ import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/desing/spacing_responsive.dart';
+import 'package:talleres/desing/spacing_responsive.dart';// ignore: unused_import
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
-import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
+import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';// ignore: unused_import
 import '../../domain/vehiculo.dart';
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
 import 'package:talleres/features/vehiculos/domain/cliente.dart';
@@ -79,7 +79,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   Widget datosCliente() {
   double total = _proceso.fold(0, (sum, p) => sum + p.valor);
   final formato = NumberFormat("#,##0.00", "es_CO");
-  String metodoPagos = '';
+  //String metodoPagos = '';
 
     return SafeArea(
       child: SingleChildScrollView(

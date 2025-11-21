@@ -250,11 +250,9 @@ class _AbonoScreenState extends State<AbonoScreen> {
                   );
                   return;
                 }
-                Navigator.pushReplacement(
+                Navigator.popUntil(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => const VehiculosScreen()
-                  ),
+                  ModalRoute.withName('/'),
                 );
               },
             ),

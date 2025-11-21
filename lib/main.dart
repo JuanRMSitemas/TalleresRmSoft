@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
                 ingreso: args['ingreso'],
                 salidaEstimada: args['salidaEstimada'],
                 procesos: args['procesos'],
-                metodoPago: args['metodoPago'],
+                metodoPago:  List<String>.from(args['metodoPago']),
               ),
             );
 
