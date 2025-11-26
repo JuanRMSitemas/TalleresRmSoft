@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/lyout/menu_side.dart';
+import 'package:talleres/core/widgets/navigation/lyout/menu_side.dart';
 import 'package:talleres/desing/text_style.dart';
 
 class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -27,7 +27,6 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
               builder: (context) => IconButton(
                 icon: const Icon(Icons.menu),
                 onPressed: () => Scaffold.of(context).openDrawer(),
-                color: const Color.fromARGB(255, 59, 137, 255),
               ),
             )
           : null,

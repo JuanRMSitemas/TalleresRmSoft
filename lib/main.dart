@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:talleres/core/theme/theme.dart';
 import 'package:talleres/features/settings/presentation/settings_page.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
@@ -20,10 +21,10 @@ class MyApp extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light(),
+      theme: lightMode,
+      darkTheme: darkMode,
       title: 'Taller Mecanico',
       debugShowCheckedModeBanner: false,
-      // locale: const Locale('es', 'ES'), // idioma español
       supportedLocales: const [
         Locale('es', 'ES'),
         Locale('en', 'US'),

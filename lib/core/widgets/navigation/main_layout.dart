@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/lyout/bottom_appbar.dart';
+import 'package:talleres/core/widgets/navigation/lyout/bottom_appbar.dart';
+import 'package:talleres/core/widgets/navigation/lyout/box.dart';
 //import 'package:talleres/core/widgets/lyout/menu_side.dart';
-import 'package:talleres/core/widgets/lyout/top_appbar.dart';
+import 'package:talleres/core/widgets/navigation/lyout/top_appbar.dart';
 
 
 class MainLayout extends StatelessWidget {
@@ -29,7 +30,12 @@ class MainLayout extends StatelessWidget {
       ), //titulo de la vista
       floatingActionButton: floatingActionButton,
       bottomNavigationBar: showBottomNav? const BottomAppBarCustom(): null,
-      body: body,
+
+      //backgroundColor: Theme.of(context).colorScheme.secondary,
+      body: Box(
+        color: Theme.of(context).colorScheme.surface,
+        child: body,
+      ),
     
     );
   }

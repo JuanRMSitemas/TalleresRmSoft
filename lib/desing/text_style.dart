@@ -10,13 +10,13 @@ class TextStyles {
   static const TextStyle h2Sub = TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500);
 
   //Scaffold titles
-  static const TextStyle scaffoldTitle = TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold);
+  static const TextStyle scaffoldTitle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
 
   //Encabezados
-  static const TextStyle h1 = TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
-  static const TextStyle h2 = TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500);
-  static const TextStyle h3 = TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400);
-  static const TextStyle h4 = TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600);
+  static const TextStyle h1 = TextStyle(fontSize: 22, fontWeight: FontWeight.bold);
+  static const TextStyle h2 = TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
+  static const TextStyle h3 = TextStyle(fontSize: 20, fontWeight: FontWeight.w400);
+  static const TextStyle h4 = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
   static const TextStyle h4Color = TextStyle(color: Color.fromARGB(255, 17, 42, 184), fontSize: 16, fontWeight: FontWeight.w600);
 
   static const TextStyle h5 = TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600);
