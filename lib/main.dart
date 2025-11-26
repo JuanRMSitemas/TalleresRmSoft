@@ -9,15 +9,21 @@ import 'package:talleres/features/vehiculos/domain/vehiculo.dart';// ignore: unu
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';// ignore: unused_import
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';// ignore: unused_import
 
-class MyApp extends StatelessWidget {
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget 
+{
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.light(),
       title: 'Taller Mecanico',
       debugShowCheckedModeBanner: false,
-      locale: const Locale('es', 'ES'), // idioma español
+      // locale: const Locale('es', 'ES'), // idioma español
       supportedLocales: const [
         Locale('es', 'ES'),
         Locale('en', 'US'),
@@ -27,6 +33,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      initialRoute: '/',
       routes: {
         '/': (context) => const VehiculosScreen(), // ruta principal
         '/settings': (context) => const SettingsPage(),
@@ -67,13 +74,12 @@ class MyApp extends StatelessWidget {
               ),
             );
         }
-        return null;
+        return MaterialPageRoute(
+          builder: (_) => const Scaffold(
+            body: Center(child: Text("Página no encontrada")),
+          ),
+        );
       }
     );
   }
-}
-void main() {
-  runApp(MaterialApp(
-    home: MyApp(),
-  ));
 }

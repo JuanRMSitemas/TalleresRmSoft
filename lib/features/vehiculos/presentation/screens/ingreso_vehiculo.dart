@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart'; //se importa los Appbarrs
-import 'package:talleres/desing/app_colors.dart';
+import 'package:talleres/core/theme/app_colors.dart';
 // import 'package:intl/intl.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
@@ -8,8 +8,6 @@ import 'package:talleres/features/vehiculos/domain/cliente.dart';
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
 import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
 import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
-
-
 
 class IngresoVehiculoScreen extends StatefulWidget {
   final void Function(
@@ -88,14 +86,9 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       title: 'Ingresar Vehículo',
-      selectedIndex: 0, // índice del BottomNavigationBar
-      onTabSelected: (i) {
-        // Navegación desde el BottomNav
-        if (i == 0) Navigator.pushReplacementNamed(context, '/');
-        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      },
-
       body: bodyResult(),
+      showBottomNav: false,
+      showDrawer: false,
     );
   }
 
@@ -360,7 +353,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                   icon: const Icon(Icons.save),
                   label: const Text('Guardar vehículo'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.BackgroundButton,
+                    backgroundColor: AppColors.buttonPrimary,
                     foregroundColor: AppColors.BackgrounLight,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,

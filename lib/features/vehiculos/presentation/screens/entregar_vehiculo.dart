@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
@@ -7,12 +6,7 @@ import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/desing/spacing_responsive.dart';// ignore: unused_import
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
-import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';// ignore: unused_import
-import '../../domain/vehiculo.dart';
-import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
-import 'package:talleres/features/vehiculos/domain/cliente.dart';
 
 class EntregarVehiculo extends StatefulWidget {
   final String nombre;
@@ -48,9 +42,9 @@ class EntregarVehiculo extends StatefulWidget {
   EntregarVehiculoState createState() => EntregarVehiculoState();
 }
 class EntregarVehiculoState extends State<EntregarVehiculo> {
-  final List<Cliente> _cliente = [];
-  final List<Vehiculo> _vehiculos = [];
-  final List<Orden> _orden = []; 
+  // final List<Cliente> _cliente = [];
+  // final List<Vehiculo> _vehiculos = [];
+  // final List<Orden> _orden = []; 
   final List<Procesos> _proceso = [];
   
   final TextEditingController _notasfinal = TextEditingController();
@@ -60,19 +54,15 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   exportBackgroundColor: const Color.fromARGB(255, 255, 249, 211),
   );
   
-  get metodoPagoSelec => null;
+  //get metodoPagoSelec => null;
 
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       title: 'FINALIZAR',
-      selectedIndex: 0,
-      onTabSelected: (i) {
-        // Navegación desde el BottomNav
-        if (i == 0) Navigator.pushReplacementNamed(context, '/');
-        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      },
       body: datosCliente(),
+      showBottomNav: false,
+      showDrawer: false,
     );
   }
 

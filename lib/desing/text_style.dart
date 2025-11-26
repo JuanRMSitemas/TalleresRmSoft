@@ -9,7 +9,10 @@ class TextStyles {
 
   static const TextStyle h2Sub = TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500);
 
+  //Scaffold titles
+  static const TextStyle scaffoldTitle = TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold);
 
+  //Encabezados
   static const TextStyle h1 = TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold);
   static const TextStyle h2 = TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500);
   static const TextStyle h3 = TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400);

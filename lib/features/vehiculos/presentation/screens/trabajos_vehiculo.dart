@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart';
+//import 'package:talleres/core/widgets/custom_scaffold.dart';
+import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
@@ -64,91 +65,91 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   }
   
   void editarProceso(int index) {
-  final proceso = _proceso[index];
+    final proceso = _proceso[index];
 
-  // Controladores
-  final TextEditingController valorController =
+    // Controladores
+    final TextEditingController valorController =
       TextEditingController(text: proceso.valor.toString());
 
-  final TextEditingController notasController =
+    final TextEditingController notasController =
       TextEditingController(text: proceso.notas);
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true, // permite que suba con el teclado
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-    ),
-    builder: (context) {
-      return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 20,
-          right: 20,
-          top: 25,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // permite que suba con el teclado
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 20,
+            right: 20,
+            top: 25,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
 
-            // Título
-            const Center(
-              child: Text(
-                'Editar proceso',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // Título
+              const Center(
+                child: Text(
+                  'Editar proceso',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Campo VALOR
-            TextField(
-              controller: valorController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Valor del proceso',
-                border: OutlineInputBorder(),
+              // Campo VALOR
+              TextField(
+                controller: valorController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: 'Valor del proceso',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 15),
+              const SizedBox(height: 15),
 
-            // Campo NOTAS
-            TextField(
-              controller: notasController,
-              maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: 'Notas',
-                border: OutlineInputBorder(),
-                alignLabelWithHint: true,
+              // Campo NOTAS
+              TextField(
+                controller: notasController,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'Notas',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            // Botón guardar
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _proceso[index] = Procesos(
-                      nombre: proceso.nombre,
-                      valor: double.tryParse(valorController.text) ?? 0.0,
-                      notas: notasController.text.trim(),
-                      imagenes: proceso.imagenes,
-                    );
-                  });
+              // Botón guardar
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _proceso[index] = Procesos(
+                        nombre: proceso.nombre,
+                        valor: double.tryParse(valorController.text) ?? 0.0,
+                        notas: notasController.text.trim(),
+                        imagenes: proceso.imagenes,
+                      );
+                    });
 
-                  Navigator.pop(context); // cierra el modal
-                },
-                child: const Text('Guardar cambios'),
+                    Navigator.pop(context); // cierra el modal
+                  },
+                  child: const Text('Guardar cambios'),
+                ),
               ),
-            ),
-            const SizedBox(height: 15),
-          ],
-        ),
-      );
-    },
-  );
+              const SizedBox(height: 15),
+            ],
+          ),
+        );
+      },
+    );
 }
 
   /// Muestra el selector de categorías (BottomSheet)
@@ -185,121 +186,115 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   return _proceso.fold(0.0, (sum, item) => sum + item.valor);
   }
 
- void mostrarEdicionProceso(Procesos proceso) {
-  final valorController = TextEditingController(text: proceso.valor.toString());
-  final notasController = TextEditingController(text: proceso.notas);
+  void mostrarEdicionProceso(Procesos proceso) {
+    final valorController = TextEditingController(text: proceso.valor.toString());
+    final notasController = TextEditingController(text: proceso.notas);
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setStateModal) {
-          return AlertDialog(
-            title: Text("Editar proceso: ${proceso.nombre}"),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateModal) {
+            return AlertDialog(
+              title: Text("Editar proceso: ${proceso.nombre}"),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-                  // Campo valor
-                  TextField(
-                    controller: valorController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(labelText: "Valor"),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Campo notas
-                  TextField(
-                    controller: notasController,
-                    maxLines: 3,
-                    decoration: const InputDecoration(labelText: "Notas"),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // Botón seleccionar imagen
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      final ImagePicker picker = ImagePicker();
-                      final XFile? archivo = await picker.pickImage(
-                        source: ImageSource.gallery,
-                      );
-
-                      if (archivo != null) {
-                        final nombreArchivo = archivo.name; // ← solo el nombre
-
-                        setStateModal(() {
-                          proceso.imagenes = [nombreArchivo]; // solo 1 imagen
-                        });
-                      }
-                    },
-                    icon: const Icon(Icons.image),
-                    label: const Text("Seleccionar imagen"),
-                  ),
-
-                  // Mostrar nombre del archivo si existe
-                  if (proceso.imagenes.isNotEmpty) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      "Imagen seleccionada:",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    // Campo valor
+                    TextField(
+                      controller: valorController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(labelText: "Valor"),
                     ),
-                    Text(
-                      proceso.imagenes.first,
-                      style: const TextStyle(color: Colors.grey),
-                    )
+
+                    const SizedBox(height: 12),
+
+                    // Campo notas
+                    TextField(
+                      controller: notasController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(labelText: "Notas"),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Botón seleccionar imagen
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? archivo = await picker.pickImage(
+                          source: ImageSource.gallery,
+                        );
+
+                        if (archivo != null) {
+                          final nombreArchivo = archivo.name; // ← solo el nombre
+
+                          setStateModal(() {
+                            proceso.imagenes = [nombreArchivo]; // solo 1 imagen
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.image),
+                      label: const Text("Seleccionar imagen"),
+                    ),
+
+                    // Mostrar nombre del archivo si existe
+                    if (proceso.imagenes.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        "Imagen seleccionada:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        proceso.imagenes.first,
+                        style: const TextStyle(color: Colors.grey),
+                      )
+                    ],
                   ],
-                ],
-              ),
-            ),
-
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Cancelar"),
+                ),
               ),
 
-              ElevatedButton(
-                onPressed: () {
-                  // Guardar cambios en el proceso
-                  setState(() {
-                    proceso.valor = double.tryParse(valorController.text) ?? 0;
-                    proceso.notas = notasController.text;
-                  });
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancelar"),
+                ),
 
-                  Navigator.pop(context);
-                },
-                child: const Text("Guardar"),
-              ),
-            ],
-          );
-        },
-      );
-    },
-  );
-}
+                ElevatedButton(
+                  onPressed: () {
+                    // Guardar cambios en el proceso
+                    setState(() {
+                      proceso.valor = double.tryParse(valorController.text) ?? 0;
+                      proceso.notas = notasController.text;
+                    });
 
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Guardar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return MainLayout(
       title: 'TRABAJOS',
-      selectedIndex: 0,
-      onTabSelected: (i) {
-        // Navegación desde el BottomNav
-        if (i == 0) Navigator.pushReplacementNamed(context, '/');
-        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      },
       body: trabajosVehiculo(),
+      showDrawer: false,
+      showBottomNav: false,
     );
   }
 
   Padding trabajosVehiculo(){
     double costoProc = 0;
     _costoController.text = costoProc.toString();
-
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(

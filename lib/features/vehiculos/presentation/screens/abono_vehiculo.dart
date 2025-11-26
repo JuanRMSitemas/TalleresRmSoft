@@ -4,7 +4,7 @@ import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart'; 
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:talleres/features/vehiculos/domain/procesos.dart';
-import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
+//import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:intl/intl.dart';
 import 'package:talleres/desing/spacing_responsive.dart';
 
@@ -39,12 +39,12 @@ class _AbonoScreenState extends State<AbonoScreen> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       title: 'ABONO',
-      selectedIndex: 0,
-      onTabSelected: (i) {
-        // Navegación desde el BottomNav
-        if (i == 0) Navigator.pushReplacementNamed(context, '/');
-        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      },
+      // selectedIndex: 0,
+      // onTabSelected: (i) {
+      //   // Navegación desde el BottomNav
+      //   if (i == 0) Navigator.pushReplacementNamed(context, '/');
+      //   if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
+      // },
       body: datosCliente(),
     );
   }
