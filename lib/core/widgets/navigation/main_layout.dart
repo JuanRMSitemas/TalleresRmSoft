@@ -36,7 +36,6 @@ class MainLayout extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         child: body,
       ),
-    
     );
   }
 }
