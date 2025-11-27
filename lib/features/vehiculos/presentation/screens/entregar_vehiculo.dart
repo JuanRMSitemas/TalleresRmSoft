@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
+import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
@@ -58,7 +59,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return MainLayout(
       title: 'FINALIZAR',
       body: datosCliente(),
       showBottomNav: false,

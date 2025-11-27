@@ -20,8 +20,9 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
           style: TextStyles.scaffoldTitle,
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        foregroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        //foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        
         leading: showDrawer? 
           Builder(
               builder: (context) => IconButton(

@@ -19,8 +19,8 @@ class Buttons extends StatelessWidget {
       width: double.infinity, 
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.buttonPrimary,
-          foregroundColor: AppColors.BackgrounLight,
+          backgroundColor: AppColors.buttonGreen,
+          foregroundColor: AppColors.backgrounLight,
           textStyle: TextStyle(
             fontWeight: FontWeight.bold,
           ),

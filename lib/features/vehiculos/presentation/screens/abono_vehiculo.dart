@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart';
+import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart'; 
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
@@ -37,15 +38,11 @@ class _AbonoScreenState extends State<AbonoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      title: 'ABONO',
-      // selectedIndex: 0,
-      // onTabSelected: (i) {
-      //   // Navegación desde el BottomNav
-      //   if (i == 0) Navigator.pushReplacementNamed(context, '/');
-      //   if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      // },
+    return MainLayout(
+      title: 'ABONO',      
       body: datosCliente(),
+      showDrawer: false,
+      showBottomNav: false,
     );
   }
 

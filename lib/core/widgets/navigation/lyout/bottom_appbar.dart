@@ -18,15 +18,15 @@ class BottomAppBarCustom extends StatelessWidget {
           child: Container(
             height: 65,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15), // 👈 ESTILO iOS
+              color: const Color.fromARGB(33, 255, 255, 255), // 👈 ESTILO iOS
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
-                color: Colors.white.withOpacity(0.3), // 👈 BORDE GLASSSMORPHISM
+                color: const Color.fromARGB(75, 255, 255, 255), // 👈 BORDE GLASSSMORPHISM
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: const Color.fromARGB(28, 0, 0, 0),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 )
@@ -36,7 +36,7 @@ class BottomAppBarCustom extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 IconButton(
-                  color: Colors.blueAccent,
+                  color:Theme.of(context).colorScheme.primary,
                   icon: const Icon(Icons.home_filled),
                   onPressed: () {
                     // 🔥 Cambia por context.go si usas GoRouter
@@ -44,8 +44,7 @@ class BottomAppBarCustom extends StatelessWidget {
                   },
                 ),
                 IconButton(
-                  color: Colors.blueAccent,
-                  iconSize: 28,
+                  color:Theme.of(context).colorScheme.primary,
                   icon: const Icon(Icons.settings_rounded),
                   onPressed: () {
                     Navigator.push(

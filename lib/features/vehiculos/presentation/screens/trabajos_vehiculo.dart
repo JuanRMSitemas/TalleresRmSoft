@@ -348,9 +348,9 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
               Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                border: Border.all(color: const Color.fromARGB(255, 47, 116, 73)),
+                border: Border.all(color: Theme.of(context).colorScheme.primary,),
                 borderRadius: BorderRadius.circular(8),
-                color: Colors.blueGrey[50]
+                color: Theme.of(context).colorScheme.secondary,
               ),
               child: Column(
                 children: [
@@ -390,42 +390,42 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
           ),
           
           Expanded(
-              child: _proceso.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No hay trabajos agregados. Pulsa "Agregar trabajo".',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _proceso.length,
-                      itemBuilder: (context, index){
-                        final proceso = _proceso[index]; //se obtiene el objeto
+            child: _proceso.isEmpty
+            ? Center(
+                child: Text(
+                  'No hay trabajos agregados. Pulsa "Agregar trabajo".',
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+              )
+            : ListView.builder(
+                itemCount: _proceso.length,
+                itemBuilder: (context, index){
+                  final proceso = _proceso[index]; //se obtiene el objeto
 
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          child: ListTile(
-                            title: Text(proceso.nombre),
-                            subtitle: Text("Valor: \$${proceso.valor.toStringAsFixed(0)}"),
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      title: Text(proceso.nombre),
+                      subtitle: Text("Valor: \$${proceso.valor.toStringAsFixed(0)}"),
 
-                            // ÍCONOS
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.orange),
-                                  onPressed: () {
-                                    mostrarEdicionProceso(proceso); // ← aquí se llama
-                                  },
-                                ),
-                              ],
-                            ),
+                      // ÍCONOS
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.orange),
+                            onPressed: () {
+                              mostrarEdicionProceso(proceso); // ← aquí se llama
+                            },
                           ),
-                        );
-                      },
+                        ],
+                      ),
                     ),
-            ),
-           // ✅ Aquí usamos Expanded para que el ListView tenga espacio limitado dentro del Column
+                  );
+                },
+              ),
+          ),
+          // ✅ Aquí usamos Expanded para que el ListView tenga espacio limitado dentro del Column
           
           // Botón para agregar procesos
           SizedBox(

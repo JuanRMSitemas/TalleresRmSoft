@@ -57,6 +57,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
       floatingActionButton: FloatingActionButton( // + INGRESAR VEHICULO
         onPressed: _agregarVehiculo,
         tooltip: 'Agregar vehículo',
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
       //showDrawer: false,

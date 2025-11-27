@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/custom_scaffold.dart'; //se importa los Appbarrs
 import 'package:talleres/core/theme/app_colors.dart';
+import 'package:talleres/core/widgets/navigation/main_layout.dart';
 // import 'package:intl/intl.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
@@ -84,7 +85,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return MainLayout(
       title: 'Ingresar Vehículo',
       body: bodyResult(),
       showBottomNav: false,
@@ -353,8 +354,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                   icon: const Icon(Icons.save),
                   label: const Text('Guardar vehículo'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonPrimary,
-                    foregroundColor: AppColors.BackgrounLight,
+                    backgroundColor: AppColors.buttonGreen,
+                    foregroundColor: AppColors.backgrounLight,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 12,
