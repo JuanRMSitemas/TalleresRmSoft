@@ -4,7 +4,7 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/features/vehiculos/domain/procesos.dart';
+import 'package:talleres/model/procesos.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';// ignore: unused_import
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';// ignore: unused_import

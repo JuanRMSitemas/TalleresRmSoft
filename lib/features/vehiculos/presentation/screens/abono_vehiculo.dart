@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart'; 
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
-import 'package:talleres/features/vehiculos/domain/procesos.dart';
+import 'package:talleres/model/procesos.dart';
 //import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:intl/intl.dart';
 import 'package:talleres/desing/spacing_responsive.dart';

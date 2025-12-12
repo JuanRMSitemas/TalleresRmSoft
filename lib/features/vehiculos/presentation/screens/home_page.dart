@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
-import 'package:talleres/features/vehiculos/domain/procesos.dart';
+import 'package:talleres/model/procesos.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/entregar_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
-import '../../domain/vehiculo.dart';
+import '../../../../model/vehiculo.dart';
 import 'ingreso_vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
-import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
-import 'package:talleres/features/vehiculos/domain/cliente.dart';
+import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/model/cliente.dart';
 import 'package:talleres/desing/text_style.dart';
 
 class VehiculosScreen extends StatefulWidget {

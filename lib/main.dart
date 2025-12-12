@@ -5,9 +5,9 @@ import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.
 import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/ingreso_vehiculo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:talleres/features/vehiculos/domain/cliente.dart'; // ignore: unused_import
-import 'package:talleres/features/vehiculos/domain/vehiculo.dart';// ignore: unused_import
-import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';// ignore: unused_import
+import 'package:talleres/model/cliente.dart'; // ignore: unused_import
+import 'package:talleres/model/vehiculo.dart';// ignore: unused_import
+import 'package:talleres/model/orden_vehi.dart';// ignore: unused_import
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';// ignore: unused_import
 
 void main() {

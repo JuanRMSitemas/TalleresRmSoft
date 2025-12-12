@@ -1,13 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:signature/signature.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/features/vehiculos/domain/procesos.dart';
+import 'package:talleres/model/procesos.dart';
 
 class EntregarVehiculo extends StatefulWidget {
   final String nombre;
@@ -311,14 +310,14 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
               child: Buttons(
                 text: 'Guardar',
                 onPressed: () async {
-                    // Exporta la firma a bytes (Uint8List)
-                    final Uint8List? firmaBytes = await _firmaController.toPngBytes();
+                  // Exporta la firma a bytes (Uint8List)
+                  final Uint8List? firmaBytes = await _firmaController.toPngBytes();
 
-                    if (firmaBytes != null) {
-                      // Aquí puedes guardarla en base de datos, local storage o enviarla por API
-                      print("Firma capturada: ${firmaBytes.length} bytes");
-                    }
-                  },
+                  if (firmaBytes != null) {
+                    // Aquí puedes guardarla en base de datos, local storage o enviarla por API
+                    print("Firma capturada: ${firmaBytes.length} bytes");
+                  }
+                },
               ),
             ),
           ],

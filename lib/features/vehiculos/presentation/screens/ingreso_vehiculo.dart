@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart'; //se importa los Appbarrs
 import 'package:talleres/core/theme/app_colors.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
 // import 'package:intl/intl.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
-import 'package:talleres/features/vehiculos/domain/cliente.dart';
-import 'package:talleres/features/vehiculos/domain/procesos.dart';
-import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
-import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
+import 'package:talleres/model/cliente.dart';
+import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/vehiculo.dart';
+import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/services/api_service.dart';
 
 class IngresoVehiculoScreen extends StatefulWidget {
+
   final void Function(
     Cliente cliente,
     Vehiculo vehiculo,
@@ -46,11 +47,12 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas'];
   final TextEditingController _fechaController = TextEditingController();
 
-  void _guardar() {
+
+  Future<void>  _guardar() async {
     if (_formKey.currentState!.validate()) {
 
       final cliente = Cliente(
-        tipoId: _tipoSelecId,
+        tipoId: _tipoSelecId.substring(0,1),
         numeroId: _numeroIdController.text,
         nombre: _nombreController.text,
         celular: _celularController.text,
@@ -78,7 +80,21 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         valor: 0,
       );
 
+      final api = ApiService();
+
+      final okCliente = await api.registrarCliente(cliente);
+
+      if (!okCliente) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error guardando el cliente")),
+        );
+        return;
+      }
       widget.onVehiculoIngresado(cliente, vehiculo, orden, proceso);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Registro exitoso")),
+      );
+
       Navigator.pop(context);
     }
   }
