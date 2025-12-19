@@ -7,11 +7,8 @@ class Cliente {
   final String email;
   final String celular;
   final List<Vehiculo> vehiculos;
-  
 
-  //meter como clave foranea el vehiculo
-
-  /// 
+  ///required obliga a enviar el dato - vehiculos tiene valor por defecto → evita null
   Cliente({
     required this.tipoId,
     required this.numeroId,
@@ -20,6 +17,22 @@ class Cliente {
     required this.celular,
     this.vehiculos = const[],
   });
+
+   ///factory permite crear un objeto a partir de otro formato - En este caso: JSON → Cliente
+  factory Cliente.fromJson(Map<String, dynamic> json) {
+    return Cliente(
+      tipoId: json['tipoDocumento'],
+      numeroId: json['nit'],
+      nombre: json['nombre'],
+      email: json['email'],
+      celular: json['celular'],
+      vehiculos: json['vehiculos'] != null
+      ? List<Vehiculo>.from(
+          json['vehiculos'].map((v) => Vehiculo.fromJson(v)),
+        )
+        : [],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

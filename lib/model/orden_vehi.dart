@@ -1,20 +1,73 @@
+import 'package:talleres/model/cliente.dart';
+import 'package:talleres/model/vehiculo.dart';
+import 'package:talleres/model/orden_servi.dart';
+
 class Orden {
-  //int idOrden;
+  final String id;
   final DateTime fechaIngreso;
-  final DateTime posibleEntrega;
-  final DateTime? fechaEntrega;
-  final String notas;
+  final DateTime fechaIngresoVehi;
+  final DateTime fechaEstimada;
+  final DateTime? fechaEntrega; //fecha salida
+  final String notasIngreso;
+  final String notasSalida;
   final String metodoPago;
   final double costo;
-
+  final Cliente cliente;
+  final Vehiculo vehiculo;
+  final List<OrdenServicio> servicios;
 
   Orden({
     //required this.idOrden,
+    required this.id, 
     required this.fechaIngreso,
-    required this.posibleEntrega,
+    required this.fechaIngresoVehi,
+    required this.fechaEstimada,
     this.fechaEntrega,
-    this.notas = '',
+    this.notasIngreso = '',
+    this.notasSalida = '',
     this.metodoPago = '',
     this.costo = 0,
+    required this.cliente,
+    required this.vehiculo,
+    this.servicios = const[], 
   });
+
+  factory Orden.fromJson(Map<String, dynamic> json){
+    return Orden(
+      id: json['id'],
+      fechaIngreso: json['fechaIngreso'],
+      fechaIngresoVehi: json['fechaIngresoVehi'],
+      fechaEstimada: json['fechaEstimada'],
+      fechaEntrega: json['fechaEntrega'],
+      notasIngreso: json['notasIngreso'],
+      notasSalida: json['notasSalida'],
+      metodoPago: json['metodoPago'], //aun no hay asignada una columna para este campo en Spring Boot
+      costo: json['total'],
+      cliente: json['cliente'],
+      vehiculo: json['vehiculo'],
+      servicios: json['servicios'] != null
+      ? List<OrdenServicio>.from(
+        json['servicios'].map((s) => OrdenServicio.fromJson(s)),
+    )
+    : [],
+    );
+  }
+
+  Map<String, dynamic> toJson(){
+    return{
+      "id": id,
+      "fechaIngreso":fechaIngreso,
+      "fechaIngresoVehi":fechaIngresoVehi,
+      "fechaEstimada": fechaEstimada,
+      "fechaEntrega": fechaEntrega,
+      "notasIngreso": notasIngreso,
+      "notasSalida": notasSalida,
+      "metodoPago": metodoPago,
+      "total": costo,
+      "cliente":cliente,
+      "vehiculo":vehiculo,
+      "servicio":servicios.map((s) => s.toJson()).toList(),
+
+    };
+  }
 }

@@ -6,7 +6,7 @@ class Procesos{
   String notas;
   List<String> imagenes;
 
-  Procesos({
+    Procesos({
     required this.nombre,
     required this.valor,
     this.notas = '',

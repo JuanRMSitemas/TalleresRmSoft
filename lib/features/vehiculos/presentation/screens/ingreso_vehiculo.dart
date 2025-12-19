@@ -5,10 +5,13 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/model/cliente.dart';
+import 'package:talleres/model/orden_servi.dart';
 import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/servicio.dart';
 import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/model/orden_vehi.dart';
 import 'package:talleres/services/api_service.dart';
+import 'package:talleres/services/cliente_service.dart';
 
 class IngresoVehiculoScreen extends StatefulWidget {
 
@@ -29,29 +32,76 @@ class IngresoVehiculoScreen extends StatefulWidget {
 //Formulario de ingreso
 //Aqui se genera el formulario de ingreso del vehiculo
 class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
+  
   final _formKey = GlobalKey<FormState>();
+  //Cliente controladores
+  final List<String> _tiposId = ['CC', 'NIT', 'Otro'];
   String _tipoSelecId = "CC";
   final TextEditingController _numeroIdController = TextEditingController();
-  String _tipoSelecVehiculo = 'Carro';
-  final TextEditingController _placaController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
-  final TextEditingController _celularController = TextEditingController();
   final TextEditingController _correoController = TextEditingController();
+  final TextEditingController _celularController = TextEditingController();
+
+  //Vehiculo controladores
+  String _tipoSelecVehiculo = 'Carro';
+  final List<String> _tiposVehiculos = ['Carro', 'Moto', 'Camión'];
+  final TextEditingController _placaController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _marcaController = TextEditingController();
-  String _procesoSelec = 'Seleccione proceso';
+
+  //Orden controladores
   DateTime _fechaSeleccionada  = DateTime.now();
   final TextEditingController _notasController = TextEditingController();
-  final List<String> _tiposId = ['CC', 'NIT', 'Otro'];
-  final List<String> _tiposVehiculos = ['Carro', 'Moto', 'Camión'];
-  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas'];
   final TextEditingController _fechaController = TextEditingController();
 
+  //Servicio controladores
+  final TextEditingController _idController =TextEditingController();
+  final TextEditingController _nombreServicioController = TextEditingController();
+  final TextEditingController _descripcionController = TextEditingController();
+  final TextEditingController _precioController = TextEditingController();
+
+  //OrdenServicio controladores
+  final TextEditingController _precioServicioController = TextEditingController();
+  final TextEditingController _subtotalController = TextEditingController();
+
+  //Procesos controladores
+  String _procesoSelec = 'Seleccione proceso';
+  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas'];
+
+  final ClienteService clienteService = ClienteService();
+  bool clienteExiste = false;
+
+  Future<void> buscarCliente(String nit) async {
+    final cliente = await clienteService.buscarCliente(nit);
+    String tipoDoc = "null";
+
+    if (cliente != null) {
+      if(_tipoSelecId == 'C'){
+        tipoDoc = 'CC';
+      } 
+      tipoDoc =cliente.tipoId;
+      _nombreController.text = cliente.nombre;
+      _correoController.text = cliente.email;
+      _celularController.text = cliente.celular;
+
+      setState(() {
+        clienteExiste = true;
+      });
+    } else {
+      _nombreController.clear();
+      _correoController.clear();
+      _celularController.clear();
+
+      setState(() {
+        clienteExiste = false;
+      });
+    }
+  }
 
   Future<void>  _guardar() async {
     if (_formKey.currentState!.validate()) {
 
-      final cliente = Cliente(
+      final clientes = Cliente(
         tipoId: _tipoSelecId.substring(0,1),
         numeroId: _numeroIdController.text,
         nombre: _nombreController.text,
@@ -59,20 +109,13 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         email: _correoController.text,
       );
 
-      final vehiculo = Vehiculo(
+      final vehiculos = Vehiculo(
         //fechaIngreso: DateTime.now(),
         tipo: _tipoSelecVehiculo,
         placa: _placaController.text,
         modelo: _modeloController.text,
         marca: _marcaController.text,
-        notasIngreso: _notasController.text,
-      );
-
-      final orden = Orden(
-        //idOrden: ,
-        fechaIngreso: DateTime.now(),
-        posibleEntrega: _fechaSeleccionada,
-        notas: _notasController.text
+        //notasIngreso: _notasController.text,
       );
 
       final proceso = Procesos(
@@ -80,23 +123,51 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         valor: 0,
       );
 
+      final servicio = Servicio(
+        id: _idController.text,
+        nombre: _nombreServicioController.text,
+        descripcion: _descripcionController.text,
+        precio: double.parse(_precioController.text), 
+      );
+
+      final orden = Orden(
+        id: '', 
+        fechaIngreso: DateTime.now(),
+        fechaIngresoVehi: DateTime.now(), 
+        fechaEstimada: _fechaSeleccionada,
+        notasIngreso: _notasController.text, 
+        cliente: clientes, 
+        vehiculo: vehiculos,
+      );
+
+      final ordenServicio = OrdenServicio(
+        ordens: orden,
+        servicios: null, 
+        precio: double.parse(_precioServicioController.text), 
+        subtotal: double.parse(_subtotalController.text)
+      );
+
       final api = ApiService();
 
-      final okCliente = await api.registrarCliente(cliente);
+      final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
 
-      if (!okCliente) {
+      if(!okRegistro){
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error guardando el cliente")),
+          SnackBar(content: Text("error al registrar, verifique los datos"), backgroundColor: Colors.red)
         );
-        return;
       }
-      widget.onVehiculoIngresado(cliente, vehiculo, orden, proceso);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Registro exitoso")),
-      );
+      widget.onVehiculoIngresado(clientes, vehiculos, orden, proceso);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Ingresado a taller"), backgroundColor: Colors.blue),
+        );
 
       Navigator.pop(context);
     }
+  }
+
+  Future<void> crearOrden() async{
+    
+
   }
 
   @override
@@ -151,6 +222,11 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                         labelText: 'Número de ID',
                         border: OutlineInputBorder(),
                       ),
+                      onChanged: (value){
+                        if (value.length >=6){
+                          buscarCliente(value);
+                        }
+                      },
                       validator: (value) => value == null || value.isEmpty
                           ? 'Ingrese su número de ID'
                           : null,

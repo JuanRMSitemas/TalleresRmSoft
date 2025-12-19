@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:talleres/model/cliente.dart';
+import 'package:talleres/model/orden_vehi.dart';
 import 'package:talleres/model/vehiculo.dart';
 
 class ApiService {
@@ -40,5 +41,39 @@ class ApiService {
       debugPrint("Error: ${response.body}");
       return false;
     }
+  }
+
+  Future<bool> registrarClienteVehiculo(Vehiculo vehiculo, Cliente cliente) async {
+    final url = Uri.parse("$baseUrl/api/registro");
+    
+    final body ={
+      "nit": cliente.numeroId,
+      "tipoDocumento": cliente.tipoId,
+      "nombre": cliente.nombre,
+      "email":cliente.email,
+      "celular": cliente.celular,
+
+      "placa": vehiculo.placa,
+      "tipo": vehiculo.tipo,
+      "modelo": vehiculo.modelo,
+      "marca": vehiculo.marca,
+    };
+
+    final response = await http.post( 
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(body),
+    );
+
+    if(response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint("Error: ${response.body}");
+      return false;
+    }
+  }
+
+  Future<bool> crearOrden(Orden orden) async{
+    return false;
   }
 }
