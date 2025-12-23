@@ -1,5 +1,5 @@
 import 'package:talleres/model/Servicio.dart';
-import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/model/orden.dart';
 
 class OrdenServicio {
   final int? id;

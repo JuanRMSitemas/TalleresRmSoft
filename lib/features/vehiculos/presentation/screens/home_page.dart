@@ -7,7 +7,7 @@ import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehicu
 import '../../../../model/vehiculo.dart';
 import 'ingreso_vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
-import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/model/orden.dart';
 import 'package:talleres/model/cliente.dart';
 import 'package:talleres/desing/text_style.dart';
 

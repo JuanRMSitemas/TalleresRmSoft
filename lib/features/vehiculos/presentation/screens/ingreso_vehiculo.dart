@@ -5,14 +5,13 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 // import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/model/cliente.dart';
-import 'package:talleres/model/orden_servi.dart';
 import 'package:talleres/model/procesos.dart';
-import 'package:talleres/model/servicio.dart';
 import 'package:talleres/model/vehiculo.dart';
-import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/model/orden.dart';
 import 'package:talleres/services/api_service.dart';
 import 'package:talleres/services/cliente_service.dart';
 
+///Aqui se registrar el vehiculo del cliente y a apartir de ahi se genera la orden la cual se ira complementando con los servicios agregados y su pago para dar salida al vehiculo
 class IngresoVehiculoScreen extends StatefulWidget {
 
   final void Function(
@@ -54,19 +53,15 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   final TextEditingController _notasController = TextEditingController();
   final TextEditingController _fechaController = TextEditingController();
 
-  //Servicio controladores
-  final TextEditingController _idController =TextEditingController();
-  final TextEditingController _nombreServicioController = TextEditingController();
-  final TextEditingController _descripcionController = TextEditingController();
-  final TextEditingController _precioController = TextEditingController();
-
-  //OrdenServicio controladores
-  final TextEditingController _precioServicioController = TextEditingController();
-  final TextEditingController _subtotalController = TextEditingController();
+  // //Servicio controladores
+  // final TextEditingController _idController =TextEditingController();
+  // final TextEditingController _nombreServicioController = TextEditingController(); //el nopmbre del servicio
+  // final TextEditingController _descripcionController = TextEditingController();
+  // final TextEditingController _precioController = TextEditingController();
 
   //Procesos controladores
   String _procesoSelec = 'Seleccione proceso';
-  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas'];
+  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas']; //Lista por defecto de motivo inicial
 
   final ClienteService clienteService = ClienteService();
   bool clienteExiste = false;
@@ -98,6 +93,10 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
     }
   }
 
+  Future<void> buscarVehiculo(String placa) async{
+
+  }
+
   Future<void>  _guardar() async {
     if (_formKey.currentState!.validate()) {
 
@@ -122,16 +121,14 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         nombre: _procesoSelec,
         valor: 0,
       );
+      // final servicio = Servicio(
+      //   id: _idController.text,
+      //   nombre: _nombreServicioController.text,
+      //   descripcion: _descripcionController.text,
+      //   precio: double.parse(_precioController.text), 
+      // );
 
-      final servicio = Servicio(
-        id: _idController.text,
-        nombre: _nombreServicioController.text,
-        descripcion: _descripcionController.text,
-        precio: double.parse(_precioController.text), 
-      );
-
-      final orden = Orden(
-        id: '', 
+      final orden = Orden( 
         fechaIngreso: DateTime.now(),
         fechaIngresoVehi: DateTime.now(), 
         fechaEstimada: _fechaSeleccionada,
@@ -140,34 +137,43 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         vehiculo: vehiculos,
       );
 
-      final ordenServicio = OrdenServicio(
-        ordens: orden,
-        servicios: null, 
-        precio: double.parse(_precioServicioController.text), 
-        subtotal: double.parse(_subtotalController.text)
-      );
-
       final api = ApiService();
 
       final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
+
+      final okOrden = await api.crearOrden(orden);
+
+      
 
       if(!okRegistro){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("error al registrar, verifique los datos"), backgroundColor: Colors.red)
         );
       }
+
+      if (!okOrden) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al crear la orden"),backgroundColor: Colors.red,
+        ),
+      );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("1.Registro y orden creados correctamente"),
+        backgroundColor: Colors.green,
+      ),
+      );
+
       widget.onVehiculoIngresado(clientes, vehiculos, orden, proceso);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Ingresado a taller"), backgroundColor: Colors.blue),
+          SnackBar(content: Text("2.Ingresado a taller"), backgroundColor: Colors.blue),
         );
 
       Navigator.pop(context);
     }
-  }
-
-  Future<void> crearOrden() async{
-    
-
   }
 
   @override
@@ -192,7 +198,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
               Row(
                 //tipo id - Nro id
                 children: [
-                  //tipo de id
+                    //TIPO DE ID
                   Expanded(
                     flex: 2, // Se ajusta el ancho relativo
                     child: DropdownButtonFormField<String>(
@@ -211,9 +217,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                       ),
                     ),
                   ),
-
-                  const SizedBox(width: 10),
-
+                  const SizedBox(width: 10), //ESPACIADO
+                    ///NUMERO DE ID POR CLIENTE, BUSCA EL CLIENTE SI EXISTE APARTIR DE 6 DIGITOS
                   Expanded(
                     flex: 2,
                     child: TextFormField(
@@ -237,7 +242,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
               const SizedBox(height: 16),
               Row(
                 children: [
-                  //Grupo "tipo de veiculo"
+                    //GRUPO DE  "TIPO DE VEHICULO"
                   Expanded(
                     flex: 2, // ajustar el ancho relativo
                     child: DropdownButtonFormField<String>(

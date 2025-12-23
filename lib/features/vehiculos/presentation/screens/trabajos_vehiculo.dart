@@ -7,7 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:talleres/model/procesos.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';// ignore: unused_import
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';// ignore: unused_import
+import 'dart:io';
+
+import 'package:talleres/services/servicio_service.dart';// ignore: unused_import
 
 
 class TrabajoScreen extends StatefulWidget {
@@ -42,16 +44,39 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   final List<Procesos> _proceso=[];
   final TextEditingController textValor = TextEditingController();
   //final ImagePicker _picker = ImagePicker();
+  
   //Listado de procesos
-  final List<Procesos> _categoriasDisponibles = [
-    Procesos(nombre: 'Mantenimiento preventivo', valor: 0),
-    Procesos(nombre: 'Mantenimiento correctivo', valor: 0),
-    Procesos(nombre: 'Diagnóstico general', valor: 0),
-    Procesos(nombre: 'Revisión de frenos', valor: 0),
-    Procesos(nombre: 'Cambio de aceite', valor: 0),
-    Procesos(nombre: 'Alineación y balanceo', valor: 0),
-  ];
+  List<Procesos> _categoriasDisponibles = [];
 
+  final ServicioService _servicioApi = ServicioService();
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarProcesosDesdeServicios();
+  }
+
+  Future<void> _cargarProcesosDesdeServicios() async {
+    try {
+      final servicios = await _servicioApi.listarServicios();
+
+      setState(() {
+        _categoriasDisponibles = servicios.map((s) {
+          return Procesos(
+            nombre: s.nombre,
+            valor: s.precio,
+            notas: '',
+          );
+        }).toList();
+      });
+    } catch (e) {
+      debugPrint('Error cargando servicios: $e');
+    }
+  }
+
+
+
+//------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
   void eliminarProceso(int index) {
     setState(() {
       _proceso.removeAt(index);

@@ -2,47 +2,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:talleres/model/cliente.dart';
-import 'package:talleres/model/orden_vehi.dart';
+import 'package:talleres/model/orden.dart';
 import 'package:talleres/model/vehiculo.dart';
 
 class ApiService {
-  final String baseUrl = "http://10.0.2.2:8080"; // Si usas emulador
+  final String baseUrl = "http://10.0.2.2:8080"; // emulador
   // final String baseUrl = "http://192.168.0.X:8080"; // Si usas celular real
 
-  Future<bool> registrarCliente(Cliente cliente) async {
-    final url = Uri.parse("$baseUrl/api/cliente");
-    
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(cliente.toJson()),
-    );
-
-    if(response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      debugPrint("Error: ${response.body}");
-      return false;
-    }
-  }
-
-  Future<bool> registrarVehiculo(Vehiculo vehiculo) async {
-    final url = Uri.parse("$baseUrl/api/vehiculo");
-    
-    final response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(vehiculo.toJson()),
-    );
-
-    if(response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      debugPrint("Error: ${response.body}");
-      return false;
-    }
-  }
-
+  ///Aqui se registra el cliente y el vehiculo el cual se relacioanara con la orden
   Future<bool> registrarClienteVehiculo(Vehiculo vehiculo, Cliente cliente) async {
     final url = Uri.parse("$baseUrl/api/registro");
     
@@ -59,7 +26,7 @@ class ApiService {
       "marca": vehiculo.marca,
     };
 
-    final response = await http.post( 
+    final response = await http.post( //Post envia para registrar o guardar en la DB
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode(body),
@@ -73,7 +40,20 @@ class ApiService {
     }
   }
 
-  Future<bool> crearOrden(Orden orden) async{
-    return false;
+  Future<bool> crearOrden(Orden orden) async {
+    final url = Uri.parse("$baseUrl/api/orden");
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(orden.toJson()),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      debugPrint("Error: ${response.body}");
+      return false;
+    }
   }
 }

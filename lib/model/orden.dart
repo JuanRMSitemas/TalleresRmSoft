@@ -3,7 +3,7 @@ import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/model/orden_servi.dart';
 
 class Orden {
-  final String id;
+  final String? id;
   final DateTime fechaIngreso;
   final DateTime fechaIngresoVehi;
   final DateTime fechaEstimada;
@@ -18,7 +18,7 @@ class Orden {
 
   Orden({
     //required this.idOrden,
-    required this.id, 
+    this.id, 
     required this.fechaIngreso,
     required this.fechaIngresoVehi,
     required this.fechaEstimada,
@@ -56,10 +56,10 @@ class Orden {
   Map<String, dynamic> toJson(){
     return{
       "id": id,
-      "fechaIngreso":fechaIngreso,
-      "fechaIngresoVehi":fechaIngresoVehi,
-      "fechaEstimada": fechaEstimada,
-      "fechaEntrega": fechaEntrega,
+      "fechaIngreso":fechaIngreso.toIso8601String(),
+      "fechaIngresoVehi":fechaIngresoVehi.toIso8601String(),
+      "fechaEstimada": fechaEstimada.toIso8601String(),
+      "fechaEntrega": fechaEntrega?.toIso8601String(),
       "notasIngreso": notasIngreso,
       "notasSalida": notasSalida,
       "metodoPago": metodoPago,

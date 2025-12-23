@@ -7,7 +7,7 @@ import 'package:talleres/features/vehiculos/presentation/screens/ingreso_vehicul
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:talleres/model/cliente.dart'; // ignore: unused_import
 import 'package:talleres/model/vehiculo.dart';// ignore: unused_import
-import 'package:talleres/model/orden_vehi.dart';// ignore: unused_import
+import 'package:talleres/model/orden.dart';// ignore: unused_import
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';// ignore: unused_import
 
 void main() {
