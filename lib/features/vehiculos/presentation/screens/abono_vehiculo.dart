@@ -3,7 +3,7 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart'; 
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
-import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/servicio.dart';
 //import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:intl/intl.dart';
 import 'package:talleres/desing/spacing_responsive.dart';
@@ -14,7 +14,7 @@ class AbonoScreen extends StatefulWidget {
   final String placa;
   final DateTime? ingreso;
   final DateTime? salidaEstimada;
-  final List<Procesos> procesos;
+  final List<Servicio> servicios;
   final List<String> metodoPago;
 
   const AbonoScreen({
@@ -24,7 +24,7 @@ class AbonoScreen extends StatefulWidget {
     required this.placa,
     required this.ingreso,
     required this.salidaEstimada,
-    required this.procesos,
+    required this.servicios,
     required this.metodoPago,
   });
 
@@ -46,7 +46,7 @@ class _AbonoScreenState extends State<AbonoScreen> {
   }
 
   Padding datosCliente() {
-    double total = widget.procesos.fold(0, (sum, p) => sum + p.valor);
+    double total = widget.servicios.fold(0, (sum, p) => sum + p.precio);
     final formato = NumberFormat("#,##0.00", "es_CO");
     //String metodoPagos = '';
     return Padding(
@@ -114,9 +114,9 @@ class _AbonoScreenState extends State<AbonoScreen> {
           //Recuadro con Procesos realizados -------------
           Expanded( // cuerpo de recuadro Servicios o Procesos
             child: ListView.builder(
-              itemCount: widget.procesos.length,
+              itemCount: widget.servicios.length,
               itemBuilder: (context,index) {
-                final proceso = widget.procesos[index];
+                final servicio = widget.servicios[index];
                 return Card(
                   //margin: const EdgeInsets.symmetric(vertical: 5),
                   elevation: 1,
@@ -125,14 +125,14 @@ class _AbonoScreenState extends State<AbonoScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Nombre del proceso
+                        // Nombre del servicio
                         Expanded(
                           flex: 2,
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  proceso.nombre,
+                                  servicio.nombre,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -145,7 +145,7 @@ class _AbonoScreenState extends State<AbonoScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  ('\$ ${proceso.valor.toStringAsFixed(0)}'),
+                                  ('\$ ${servicio.precio.toStringAsFixed(0)}'),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),

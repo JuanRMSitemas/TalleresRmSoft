@@ -19,4 +19,25 @@ class OrdenServicioApi {
       throw Exception('Error al registrar servicio');
     }
   }
+
+  /// ✏️ Actualizar servicio de la orden
+  Future<void> actualizarServicio(OrdenServicio ordenServicio) async {
+    if (ordenServicio.id == null) {
+      throw Exception('El ID es obligatorio para actualizar');
+    }
+
+    final url =
+        Uri.parse("$baseUrl/api/orden_servi/${ordenServicio.id}");
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(ordenServicio.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar servicio');
+    }
+  }
+
 }

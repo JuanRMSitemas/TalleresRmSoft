@@ -6,7 +6,7 @@ import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/servicio.dart';
 
 class EntregarVehiculo extends StatefulWidget {
   final String nombre;
@@ -16,7 +16,7 @@ class EntregarVehiculo extends StatefulWidget {
   final String placa;
   final DateTime? ingreso;
   final DateTime salidaEstimada;
-  final List<Procesos> procesos;
+  final List<Servicio> servicios;
   final List<String> metodoPago;
   final String notas;
   final double valorTotal;
@@ -30,7 +30,7 @@ class EntregarVehiculo extends StatefulWidget {
     required this.placa,
     required this.ingreso,
     required this.salidaEstimada,
-    required this.procesos,
+    required this.servicios,
     required this.metodoPago,
     required this.notas,
     required this.valorTotal,
@@ -45,7 +45,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   // final List<Cliente> _cliente = [];
   // final List<Vehiculo> _vehiculos = [];
   // final List<Orden> _orden = []; 
-  final List<Procesos> _proceso = [];
+  final List<Servicio> _servicio = [];
   
   final TextEditingController _notasfinal = TextEditingController();
   final SignatureController _firmaController = SignatureController(
@@ -67,7 +67,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   }
 
   Widget datosCliente() {
-  double total = _proceso.fold(0, (sum, p) => sum + p.valor);
+  double total = _servicio.fold(0, (sum, p) => sum + p.precio);
   final formato = NumberFormat("#,##0.00", "es_CO");
   //String metodoPagos = '';
 
@@ -196,9 +196,9 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _proceso.length,
+                itemCount: _servicio.length,
                 itemBuilder: (context, index) {
-                  final proceso = _proceso[index];
+                  final servicio = _servicio[index];
                   return Card(
                     elevation: 1,
                     child: Padding(
@@ -208,14 +208,14 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              proceso.nombre,
+                              servicio.nombre,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Expanded(
                             flex: 1,
                             child: Text(
-                              '\$ ${proceso.valor.toStringAsFixed(0)}',
+                              '\$ ${servicio.precio.toStringAsFixed(0)}',
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
                             ),

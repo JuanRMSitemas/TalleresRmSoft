@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget
         '/': (context) => const VehiculosScreen(), // ruta principal
         '/settings': (context) => const SettingsPage(),
         '/ingresoVehiculo': (context) => IngresoVehiculoScreen(
-          onVehiculoIngresado: (cliente, vehiculo, orden, proceso ) {
+          onVehiculoIngresado: (cliente, vehiculo, orden, servicio ) {
           debugPrint('Vehículo ingresado');
           },
         ),        
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget
                 placa: args['placa'],
                 ingreso: args['ingreso'],
                 salidaEstimada: args['salidaEstimada'],
-                procesos: args['procesos'],
+                servicios: args['servicios'],
                 metodoPago:  List<String>.from(args['metodoPago']),
               ),
             );
@@ -69,8 +69,8 @@ class MyApp extends StatelessWidget
                 placa: args['placa'],
                 ingreso: args['ingreso'],
                 salidaEstimada: args['salidaEstimada'],
-                procesos: args['procesos'],
-                metodoPago: args['metodoPago'],
+                servicios: args['servicios'],
+                //metodoPago: args['metodoPago'],
                 costo: args['costo'],
               ),
             );

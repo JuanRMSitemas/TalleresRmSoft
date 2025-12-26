@@ -4,10 +4,10 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
-import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/orden_servi.dart';
+import 'package:talleres/model/servicio.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';// ignore: unused_import
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import 'package:talleres/services/servicio_service.dart';// ignore: unused_import
 
@@ -18,8 +18,8 @@ class TrabajoScreen extends StatefulWidget {
   final String placa;
   final DateTime ingreso;
   final DateTime salidaEstimada;
-  final List<Procesos> procesos;
-  final List<String> metodoPago;
+  final List<Servicio> servicios;
+  //final List<String> metodoPago;
   final double costo;
 
   const TrabajoScreen({
@@ -29,8 +29,8 @@ class TrabajoScreen extends StatefulWidget {
     required this.placa,
     required this.ingreso,
     required this.salidaEstimada,
-    required this.procesos,
-    required this.metodoPago,
+    required this.servicios,
+    //required this.metodoPago,
     required this.costo
   });
 
@@ -39,38 +39,40 @@ class TrabajoScreen extends StatefulWidget {
 }
 
 class _TrabajoScreenState extends State<TrabajoScreen> {
-  final formatoMoneda = NumberFormat('#,###', 'es_CO'); // 🇨🇴 formato colombiano
-  final TextEditingController _costoController = TextEditingController();
-  final List<Procesos> _proceso=[];
+  final formatoMoneda = NumberFormat('#,###', 'es_CO'); // 🇨🇴 formato colombiano 
+  final TextEditingController _costoController = TextEditingController(); //Valor por defecto sin servicios
+  
+  //Serivicios
+  final List<Servicio> _servicio=[];
   final TextEditingController textValor = TextEditingController();
   //final ImagePicker _picker = ImagePicker();
-  
-  //Listado de procesos
-  List<Procesos> _categoriasDisponibles = [];
-
-  final ServicioService _servicioApi = ServicioService();
+  //Servicio Seleccionado
+  final List <OrdenServicio> _serviciosSeleccionados = [];
+  final ServicioService servicioService = ServicioService();
+  //Listado de servicios
+  List<Servicio> _serviciosDisponibles = [];
+  bool _cargandoServicios = true;
 
   @override
   void initState() {
     super.initState();
-    _cargarProcesosDesdeServicios();
+    debugPrint('🔥 initState ejecutado');
+    listarServicios();
   }
 
-  Future<void> _cargarProcesosDesdeServicios() async {
+  Future<void> listarServicios() async {
     try {
-      final servicios = await _servicioApi.listarServicios();
+       final servicios = await servicioService.listarServicios();
 
-      setState(() {
-        _categoriasDisponibles = servicios.map((s) {
-          return Procesos(
-            nombre: s.nombre,
-            valor: s.precio,
-            notas: '',
-          );
-        }).toList();
+    setState(() {
+      _serviciosDisponibles = servicios;
+      _cargandoServicios = false;
       });
     } catch (e) {
       debugPrint('Error cargando servicios: $e');
+      setState(() {
+        _cargandoServicios = false;
+      });
     }
   }
 
@@ -79,25 +81,33 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
 //------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
   void eliminarProceso(int index) {
     setState(() {
-      _proceso.removeAt(index);
+      _servicio.removeAt(index);
     });
   }
 
-  void agregarProceso(Procesos p) {
+  void agregarProceso(Servicio p) {
     setState(() {
-      _proceso.add(Procesos(nombre: p.nombre, valor: p.valor, notas: ''));
+      _servicio.add(Servicio(nombre: p.nombre, precio: p.precio, descripcion: '', imagen: '',));
     });
+
+    // final ordenSerivicio = OrdenServicio(
+    //   ordens: p.nombre,
+    //   servicios: p.nombre,
+    //   cantidad: 0,
+    //   precio: p.valor,
+    //   subtotal: p.valor,
+    // );
   }
   
   void editarProceso(int index) {
-    final proceso = _proceso[index];
+    final servicio = _servicio[index];
 
     // Controladores
     final TextEditingController valorController =
-      TextEditingController(text: proceso.valor.toString());
+      TextEditingController(text: servicio.precio.toString());
 
     final TextEditingController notasController =
-      TextEditingController(text: proceso.notas);
+      TextEditingController(text: servicio.descripcion);
 
     showModalBottomSheet(
       context: context,
@@ -121,7 +131,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
               // Título
               const Center(
                 child: Text(
-                  'Editar proceso',
+                  'Editar servicio',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -132,7 +142,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 controller: valorController,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Valor del proceso',
+                  labelText: 'Valor del servicio',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -156,11 +166,11 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _proceso[index] = Procesos(
-                        nombre: proceso.nombre,
-                        valor: double.tryParse(valorController.text) ?? 0.0,
-                        notas: notasController.text.trim(),
-                        imagenes: proceso.imagenes,
+                      _servicio[index] = Servicio(
+                        nombre: servicio.nombre,
+                        precio: double.tryParse(valorController.text) ?? 0.0,
+                        descripcion: notasController.text.trim(),
+                        imagen: servicio.imagen,
                       );
                     });
 
@@ -179,41 +189,48 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
 
   /// Muestra el selector de categorías (BottomSheet)
   void mostrarSelectorProcesos() {
+    debugPrint('Servicios disponibles: ${_serviciosDisponibles.length}');
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (BuildContext context) {
+      builder: (context) {
+         if (_serviciosDisponibles.isEmpty) {
+        return const Padding(
+          padding: EdgeInsets.all(24),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
         return SafeArea(
           child: ListView.builder(
-            shrinkWrap: true,
+            //shrinkWrap: true,
             padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: _serviciosDisponibles.length,
             itemBuilder: (context, index) {
-              final categoria = _categoriasDisponibles[index];
+              final servicio = _serviciosDisponibles[index];
               return ListTile(
-                title: Text(categoria.nombre),
+                title: Text(servicio.nombre),
                 onTap: () {
-                  agregarProceso(categoria);
+                  agregarProceso(servicio);
                   Navigator.pop(context); // cierra el bottom sheet
                 },
               );
             },
             //separatorBuilder: (_, __) => const Divider(height: 1),
-            itemCount: _categoriasDisponibles.length,
           ),
         );
       },
     );
   }
 
-  double get totalProcesos { //suma los valores de los procesos se pasa al widget para mostrar
-  return _proceso.fold(0.0, (sum, item) => sum + item.valor);
+  double get totalProcesos { //suma los valores de los servicios se pasa al widget para mostrar
+  return _servicio.fold(0.0, (sum, item) => sum + item.precio);
   }
 
-  void mostrarEdicionProceso(Procesos proceso) {
-    final valorController = TextEditingController(text: proceso.valor.toString());
-    final notasController = TextEditingController(text: proceso.notas);
+  void mostrarEdicionProceso(Servicio servicio) {
+    final valorController = TextEditingController(text: servicio.precio.toString());
+    final notasController = TextEditingController(text: servicio.descripcion);
 
     showDialog(
       context: context,
@@ -221,7 +238,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
         return StatefulBuilder(
           builder: (context, setStateModal) {
             return AlertDialog(
-              title: Text("Editar proceso: ${proceso.nombre}"),
+              title: Text("Editar servicio: ${servicio.nombre}"),
               content: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,7 +274,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                           final nombreArchivo = archivo.name; // ← solo el nombre
 
                           setStateModal(() {
-                            proceso.imagenes = [nombreArchivo]; // solo 1 imagen
+                            servicio.imagen = nombreArchivo; // solo 1 imagen
                           });
                         }
                       },
@@ -266,14 +283,14 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     ),
 
                     // Mostrar nombre del archivo si existe
-                    if (proceso.imagenes.isNotEmpty) ...[
+                    if (servicio.imagen.isNotEmpty) ...[
                       const SizedBox(height: 12),
                       Text(
                         "Imagen seleccionada:",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        proceso.imagenes.first,
+                        servicio.imagen,
                         style: const TextStyle(color: Colors.grey),
                       )
                     ],
@@ -289,10 +306,10 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
 
                 ElevatedButton(
                   onPressed: () {
-                    // Guardar cambios en el proceso
+                    // Guardar cambios en el servicio
                     setState(() {
-                      proceso.valor = double.tryParse(valorController.text) ?? 0;
-                      proceso.notas = notasController.text;
+                      servicio.precio = double.tryParse(valorController.text) ?? 0;
+                      servicio.descripcion = notasController.text;
                     });
 
                     Navigator.pop(context);
@@ -415,7 +432,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
           ),
           
           Expanded(
-            child: _proceso.isEmpty
+            child: _servicio.isEmpty
             ? Center(
                 child: Text(
                   'No hay trabajos agregados. Pulsa "Agregar trabajo".',
@@ -423,15 +440,15 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 ),
               )
             : ListView.builder(
-                itemCount: _proceso.length,
+                itemCount: _servicio.length,
                 itemBuilder: (context, index){
-                  final proceso = _proceso[index]; //se obtiene el objeto
+                  final servicio = _servicio[index]; //se obtiene el objeto
 
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 6),
                     child: ListTile(
-                      title: Text(proceso.nombre),
-                      subtitle: Text("Valor: \$${proceso.valor.toStringAsFixed(0)}"),
+                      title: Text(servicio.nombre),
+                      subtitle: Text("Valor: \$${servicio.precio.toStringAsFixed(0)}"),
 
                       // ÍCONOS
                       trailing: Row(
@@ -440,7 +457,8 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.orange),
                             onPressed: () {
-                              mostrarEdicionProceso(proceso); // ← aquí se llama
+                              debugPrint('Botón EDICION Servicios presionado');
+                              mostrarEdicionProceso(servicio); // ← aquí se llama
                             },
                           ),
                         ],
@@ -452,13 +470,13 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
           ),
           // ✅ Aquí usamos Expanded para que el ListView tenga espacio limitado dentro del Column
           
-          // Botón para agregar procesos
+          // Botón para agregar servicios --++--
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: mostrarSelectorProcesos,
               icon: const Icon(Icons.add),
-              label: const Text('Agregar proceso'),
+              label: const Text('Agregar servicio'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,
@@ -478,7 +496,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                   builder: (context){
                     return AlertDialog(
                       title: const Text('Confirmación', style: TextStyles.alert,),
-                      content: const Text('¿Ha finalizado todos los procesos asignados?'),
+                      content: const Text('¿Ha finalizado todos los servicios asignados?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
@@ -501,7 +519,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                       'placa': widget.placa,
                       'ingreso': widget.ingreso,
                       'salidaEstimada': widget.salidaEstimada,
-                      'procesos': _proceso, // 👈 pasa la lista actual de procesos
+                      'servicios': _servicio, // 👈 pasa la lista actual de servicios
                       'metodoPago': const [], // o la lista real que uses
                     }
                   );

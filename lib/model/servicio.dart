@@ -5,22 +5,25 @@
 class Servicio {
   final String? id;
   final String nombre;
-  final String descripcion;
-  final double precio;
+  String descripcion;
+  double precio;
+  String imagen;
 
   Servicio({
-    required this.id,
+    this.id,
     required this.nombre,
     required this.descripcion,
     required this.precio,
+    required this.imagen
   });
 
   factory Servicio.fromJson(Map<String, dynamic>json){
     return Servicio(
       id:json['id'],
       nombre:json['nombre'],
-      descripcion: json['descripcion'],
-      precio: json['precio']
+      descripcion: json['descripcion']?? 'this is error for juanSe',
+      precio: (json['precio'] as num).toDouble(),
+      imagen: json['imagen'],
     );
   }
 
@@ -30,6 +33,7 @@ class Servicio {
       'nombre': nombre,
       'descripcion': descripcion,
       'precio': precio,
+      'imagen': imagen,
     };
   }
 }

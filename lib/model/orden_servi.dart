@@ -3,8 +3,8 @@ import 'package:talleres/model/orden.dart';
 
 class OrdenServicio {
   final int? id;
-  final Orden? ordens;
-  final Servicio? servicios;
+  final String? ordens;
+  final String? servicios;
   final int? cantidad;
   final double? precio;
   final double? subtotal;

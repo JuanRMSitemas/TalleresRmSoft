@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
-import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/servicio.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/entregar_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
@@ -22,7 +22,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
   final List<Cliente> _cliente = [];
   final List<Vehiculo> _vehiculos = [];
   final List<Orden> _orden = []; 
-  final List<Procesos> _proceso = [];
+  final List<Servicio> _servicio = [];
   int selectedIndex = 0;
 
   void _agregarVehiculo() {
@@ -30,12 +30,12 @@ class VehiculosScreenState extends State<VehiculosScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => IngresoVehiculoScreen(
-          onVehiculoIngresado: (Cliente cliente, Vehiculo vehiculo, Orden orden, Procesos proceso) {
+          onVehiculoIngresado: (Cliente cliente, Vehiculo vehiculo, Orden orden, Servicio servicio) {
             setState(() {
               _cliente.add(cliente);
               _vehiculos.add(vehiculo);
               _orden.add(orden);
-              _proceso.add(proceso);
+              _servicio.add(servicio);
             });
           },
         ),
@@ -149,7 +149,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   ingreso: ordenVehi.fechaIngreso,
                                   salidaEstimada: ordenVehi.fechaEstimada,
                                   placa: transporte.placa,
-                                  procesos: [],
+                                  servicios: [],
                                   metodoPago:[],
                                 ),
                                 'reparacion': TrabajoScreen(
@@ -158,8 +158,8 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   ingreso: ordenVehi.fechaIngreso,
                                   salidaEstimada: ordenVehi.fechaEstimada,
                                   placa: transporte.placa,
-                                  procesos: [],
-                                  metodoPago:[],
+                                  servicios: [],
+                                  //metodoPago:[],
                                   costo: ordenVehi.costo,
                                 ),
                                 'entregas': EntregarVehiculo(
@@ -170,7 +170,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   ingreso: ordenVehi.fechaIngreso,
                                   salidaEstimada: ordenVehi.fechaEstimada,
                                   placa: transporte.placa,
-                                  procesos: [],
+                                  servicios: [],
                                   metodoPago:[],
                                   notas: ordenVehi.notasIngreso,
                                   valorTotal: 0,

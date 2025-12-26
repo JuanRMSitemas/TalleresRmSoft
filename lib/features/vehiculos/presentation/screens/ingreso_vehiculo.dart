@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:talleres/core/theme/app_colors.dart';
 import 'package:talleres/core/widgets/navigation/main_layout.dart';
-// import 'package:intl/intl.dart';
-// import 'package:flutter/services.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/model/cliente.dart';
-import 'package:talleres/model/procesos.dart';
+import 'package:talleres/model/servicio.dart';
 import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/model/orden.dart';
 import 'package:talleres/services/api_service.dart';
@@ -18,7 +16,7 @@ class IngresoVehiculoScreen extends StatefulWidget {
     Cliente cliente,
     Vehiculo vehiculo,
     Orden orden,
-    Procesos proceso,
+    Servicio servicio,
   )
   onVehiculoIngresado;
 
@@ -60,8 +58,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   // final TextEditingController _precioController = TextEditingController();
 
   //Procesos controladores
-  String _procesoSelec = 'Seleccione proceso';
-  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas']; //Lista por defecto de motivo inicial
+  String _servicioSelec = 'Seleccione servicio';
+  final List<String> _tipoProcesos = ['Seleccione servicio' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas']; //Lista por defecto de motivo inicial
 
   final ClienteService clienteService = ClienteService();
   bool clienteExiste = false;
@@ -117,9 +115,11 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         //notasIngreso: _notasController.text,
       );
 
-      final proceso = Procesos(
-        nombre: _procesoSelec,
-        valor: 0,
+      final servicio = Servicio(
+        nombre: _servicioSelec,
+        precio: 0,
+        descripcion: '',
+        imagen: '',
       );
       // final servicio = Servicio(
       //   id: _idController.text,
@@ -132,9 +132,11 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         fechaIngreso: DateTime.now(),
         fechaIngresoVehi: DateTime.now(), 
         fechaEstimada: _fechaSeleccionada,
-        notasIngreso: _notasController.text, 
-        cliente: clientes, 
-        vehiculo: vehiculos,
+        estado: 1,
+        notasIngreso: _notasController.text,
+        //servicio: servicio.nombre 
+        cliente: clientes.numeroId, 
+        vehiculo: vehiculos.placa,
       );
 
       final api = ApiService();
@@ -167,7 +169,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
       ),
       );
 
-      widget.onVehiculoIngresado(clientes, vehiculos, orden, proceso);
+      widget.onVehiculoIngresado(clientes, vehiculos, orden, servicio);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("2.Ingresado a taller"), backgroundColor: Colors.blue),
         );
@@ -364,7 +366,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
 
               //Procesos a  vehiculo
               DropdownButtonFormField<String>(
-                initialValue: _procesoSelec,
+                initialValue: _servicioSelec,
                 hint: const Text(''),
                 items: _tipoProcesos
                     .map(
@@ -372,14 +374,14 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                     )
                     .toList(),
                 onChanged: (value) {
-                  setState(() => _procesoSelec = value!);
+                  setState(() => _servicioSelec = value!);
                 },
                 decoration: const InputDecoration(
-                  labelText: 'Seleccione un proceso',
+                  labelText: 'Seleccione un servicio',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value == 'Seleccione proceso'
-                    ? 'Seleccione un proceso'
+                validator: (value) => value == 'Seleccione servicio'
+                    ? 'Seleccione un servicio'
                     : null,
               ),
               const SizedBox(height: 10),
