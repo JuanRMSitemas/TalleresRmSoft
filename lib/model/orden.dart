@@ -4,11 +4,11 @@ import 'package:talleres/model/orden_servi.dart';
 
 class Orden {
   final String? id;
-  final DateTime fechaIngreso;
-  final DateTime fechaIngresoVehi;
-  final DateTime fechaEstimada;
+  final DateTime? fechaIngreso;
+  final DateTime? fechaIngresoVehi;
+  final DateTime? fechaEstimada;
   final DateTime? fechaEntrega; //fecha salida
-  final int estado;
+  final bool estado;
   final String notasIngreso;
   final String notasSalida;
   final String metodoPago;
@@ -22,54 +22,66 @@ class Orden {
   Orden({
     //required this.idOrden,
     this.id, 
-    required this.fechaIngreso,
-    required this.fechaIngresoVehi,
-    required this.fechaEstimada,
+    this.fechaIngreso,
+    this.fechaIngresoVehi,
+    this.fechaEstimada,
     this.fechaEntrega,
-    required this.estado,
+    this.estado = true,
     this.notasIngreso = '',
     this.notasSalida = '',
     this.metodoPago = '',
     this.costo = 0,
 
-    required this.cliente,
-    required this.vehiculo,
+    this.cliente = '',
+    this.vehiculo = '',
     
     this.servicios = const[], 
   });
 
-  factory Orden.fromJson(Map<String, dynamic> json){
-    return Orden(
-      id: json['id'],
-      fechaIngreso: json['fechaIngreso'],
-      fechaIngresoVehi: json['fechaIngresoVehi'],
-      fechaEstimada: json['fechaEstimada'],
-      fechaEntrega: json['fechaEntrega'],
-      estado: json['estado'],
-      notasIngreso: json['notasIngreso'],
-      notasSalida: json['notasSalida'],
-      metodoPago: json['metodoPago'], //aun no hay asignada una columna para este campo en Spring Boot
-      costo: json['total'],
 
-      cliente: json['cliente'],
-      vehiculo: json['vehiculo'],
-      
-      servicios: json['servicios'] != null
-      ? List<OrdenServicio>.from(
-        json['servicios'].map((s) => OrdenServicio.fromJson(s)),
-    )
-    : [],
+  /// Factory SOLO para respuestas que traen el ID
+  factory Orden.fromIdJson(Map<String, dynamic> json) {
+    return Orden(
+      id: json['id']?.toString(),
     );
   }
 
-  Map<String, dynamic> toJson(){
+  factory Orden.fromJson(Map<String, dynamic> json){ //Mapeo de los datos que vienen en formato JSON para usarlos en Dart
+    return Orden(
+      id: json['id']?.toString(),
+
+      fechaIngreso: DateTime.parse(json['fechaIngreso']),
+      fechaIngresoVehi: DateTime.parse(json['fechaIngresoVehi']),
+      fechaEstimada: DateTime.parse(json['fechaEstimada']),
+      fechaEntrega: json['fechaEntrega'] != null
+          ? DateTime.parse(json['fechaEntrega'])
+          : null,
+
+      estado: json['estado'] == 1 || json['estado'] == true,
+      notasIngreso: json['notasIngreso'] ?? '',
+      notasSalida: json['notasSalida'] ?? '',
+      metodoPago: json['metodoPago'] ?? '',
+      costo: (json['total'] as num).toDouble(),
+
+      cliente: json['cliente'].toString(),
+      vehiculo: json['vehiculo'].toString(),
+
+      servicios: json['servicios'] is List
+          ? json['servicios']
+              .map<OrdenServicio>((s) => OrdenServicio.fromJson(s))
+              .toList()
+          : [],
+    );
+  }
+
+  Map<String, dynamic> toJson(){ //Convierte los datos de Dart a formato JSON para enviarlos al backend
     return{
       "id": id,
-      "fechaIngreso":fechaIngreso.toIso8601String(),
-      "fechaIngresoVehi":fechaIngresoVehi.toIso8601String(),
-      "fechaEstimada": fechaEstimada.toIso8601String(),
+      "fechaIngreso":fechaIngreso?.toIso8601String(),
+      "fechaIngresoVehi":fechaIngresoVehi?.toIso8601String(),
+      "fechaEstimada": fechaEstimada?.toIso8601String(),
       "fechaEntrega": fechaEntrega?.toIso8601String(),
-      "estado": estado,
+      "estado": estado? 1 : 0,
       "notasIngreso": notasIngreso,
       "notasSalida": notasSalida,
       "metodoPago": metodoPago,

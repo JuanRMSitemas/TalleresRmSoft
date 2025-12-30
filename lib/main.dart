@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget
             return MaterialPageRoute(
               builder: (_) => TrabajoScreen(
                 nombre: args['nombre'],
+                numId: args['numeroId'],
                 vehiculo: args['vehiculo'],
                 placa: args['placa'],
                 ingreso: args['ingreso'],

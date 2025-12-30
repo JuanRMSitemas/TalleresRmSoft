@@ -1,6 +1,3 @@
-import 'package:talleres/model/Servicio.dart';
-import 'package:talleres/model/orden.dart';
-
 class OrdenServicio {
   final int? id;
   final String? ordens;
@@ -8,6 +5,7 @@ class OrdenServicio {
   final int? cantidad;
   final double? precio;
   final double? subtotal;
+  //final String? imagenUrl;
 
   OrdenServicio({
     this.id ,
@@ -16,6 +14,7 @@ class OrdenServicio {
     this.cantidad,
     this.precio,
     this.subtotal,
+    //this.imagenUrl,
   });
 
   //toma los datos por la api (backend)
@@ -26,7 +25,8 @@ class OrdenServicio {
       servicios: json['servicio'], 
       cantidad: json['cantidad'], 
       precio: json['precio'], 
-      subtotal: json['subtotal']
+      subtotal: json['subtotal'],
+      //imagenUrl: json['imagenUrl']
     );
   }
 

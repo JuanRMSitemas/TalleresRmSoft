@@ -1,5 +1,6 @@
 class Vehiculo{
-  bool estado;
+  //bool estado;
+  final int? id;
   final String tipo;
   final String placa;
   final String marca;
@@ -8,7 +9,8 @@ class Vehiculo{
 
   ///required obliga a enviar el dato - vehiculos tiene valor por defecto → evita null
   Vehiculo({
-    this.estado = true,
+    //this.estado = true,
+    this.id,
     required this.tipo,
     required this.placa,
     required this.marca,
@@ -17,7 +19,8 @@ class Vehiculo{
 
   factory Vehiculo.fromJson(Map<String, dynamic> json) {
     return Vehiculo(
-      estado: json['estado'],
+      //estado: json['estado'],
+      id: json['id'],
       tipo: json['tipo'],
       placa: json['placa'],
       marca: json['marca'],
@@ -27,7 +30,8 @@ class Vehiculo{
 
   Map<String, dynamic> toJson() {
     return {
-      'estado': estado,
+      //'estado': estado,
+      'id': id,
       'tipo': tipo,
       'placa': placa,
       'marca': marca,

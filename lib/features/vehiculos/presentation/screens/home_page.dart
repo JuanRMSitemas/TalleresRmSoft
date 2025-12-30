@@ -132,7 +132,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                         SizedBox(
                         // width: colWidth,
                         child: Text(
-                          formatFecha(ordenVehi.fechaIngreso), //guarda la fecha de ingreso en .fechaIngreso
+                          formatFecha(ordenVehi.fechaIngreso!), //guarda la fecha de ingreso en .fechaIngreso
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                         ),
@@ -154,6 +154,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                 ),
                                 'reparacion': TrabajoScreen(
                                   nombre: clienteV.nombre,
+                                  numId: clienteV.numeroId,
                                   vehiculo: transporte.tipo,
                                   ingreso: ordenVehi.fechaIngreso,
                                   salidaEstimada: ordenVehi.fechaEstimada,
@@ -168,7 +169,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   correo: clienteV.email,
                                   vehiculo: transporte.tipo,
                                   ingreso: ordenVehi.fechaIngreso,
-                                  salidaEstimada: ordenVehi.fechaEstimada,
+                                  salidaEstimada: ordenVehi.fechaEstimada!,
                                   placa: transporte.placa,
                                   servicios: [],
                                   metodoPago:[],
@@ -229,15 +230,15 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                             child: Container( //Resaltar de color segun el estado
                               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                               decoration: BoxDecoration(
-                                color: transporte.estado
+                                color: ordenVehi.estado
                                     ? const Color.fromARGB(134, 255, 153, 0)
                                     : const Color.fromARGB(125, 76, 175, 79),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text( 
-                                transporte.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
+                                ordenVehi.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
                                 style: TextStyle(
-                                  color: transporte.estado  // true = En Taller (naranja), false = Listo (verde)
+                                  color: ordenVehi.estado  // true = En Taller (naranja), false = Listo (verde)
                                       ? Colors.orange[900]
                                       : Colors.green[900],
                                   fontWeight: FontWeight.bold,

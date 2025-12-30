@@ -7,14 +7,14 @@ class Servicio {
   final String nombre;
   String descripcion;
   double precio;
-  String imagen;
+  String? imagen;
 
   Servicio({
     this.id,
     required this.nombre,
     required this.descripcion,
     required this.precio,
-    required this.imagen
+    this.imagen
   });
 
   factory Servicio.fromJson(Map<String, dynamic>json){
@@ -23,7 +23,7 @@ class Servicio {
       nombre:json['nombre'],
       descripcion: json['descripcion']?? 'this is error for juanSe',
       precio: (json['precio'] as num).toDouble(),
-      imagen: json['imagen'],
+      imagen: json['imagen']?? '',
     );
   }
 

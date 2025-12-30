@@ -121,18 +121,12 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         descripcion: '',
         imagen: '',
       );
-      // final servicio = Servicio(
-      //   id: _idController.text,
-      //   nombre: _nombreServicioController.text,
-      //   descripcion: _descripcionController.text,
-      //   precio: double.parse(_precioController.text), 
-      // );
 
       final orden = Orden( 
         fechaIngreso: DateTime.now(),
         fechaIngresoVehi: DateTime.now(), 
         fechaEstimada: _fechaSeleccionada,
-        estado: 1,
+        estado: true,
         notasIngreso: _notasController.text,
         //servicio: servicio.nombre 
         cliente: clientes.numeroId, 
@@ -144,6 +138,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
       final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
 
       final okOrden = await api.crearOrden(orden);
+      final idOrden = okOrden;// Obtener el ID de la orden creada
 
       
 

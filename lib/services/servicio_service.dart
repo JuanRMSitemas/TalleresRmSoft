@@ -8,7 +8,7 @@ class ServicioService {
   final String baseUrl = "http://10.0.2.2:8080"; // Si usas emulador
 
   Future<List<Servicio>> listarServicios() async{
-    final url = Uri.parse("$baseUrl/api/servicio/");
+    final url = Uri.parse("$baseUrl/api/servicio");
     final response =  await http.get(url, headers: {'Content-Type': 'application/json'});
 
     debugPrint('Status: ${response.statusCode}');

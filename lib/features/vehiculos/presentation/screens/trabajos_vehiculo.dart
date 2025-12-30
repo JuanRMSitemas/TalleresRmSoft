@@ -4,27 +4,35 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
+import 'package:talleres/model/orden.dart';
 import 'package:talleres/model/orden_servi.dart';
 import 'package:talleres/model/servicio.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';// ignore: unused_import
 import 'package:image_picker/image_picker.dart';
+import 'package:talleres/model/vehiculo.dart';
+import 'package:talleres/services/orden_api.dart';
 
-import 'package:talleres/services/servicio_service.dart';// ignore: unused_import
+import 'package:talleres/services/servicio_service.dart';
+import 'package:talleres/services/vehiculo_api.dart';// ignore: unused_import
 
 
 class TrabajoScreen extends StatefulWidget {
+  final String? idOrden;
   final String nombre;
+  final String numId;
   final String vehiculo;
   final String placa;
-  final DateTime ingreso;
-  final DateTime salidaEstimada;
+  final DateTime? ingreso;
+  final DateTime? salidaEstimada;
   final List<Servicio> servicios;
   //final List<String> metodoPago;
   final double costo;
 
   const TrabajoScreen({
     super.key,
+    this.idOrden,
     required this.nombre,
+    required this.numId,
     required this.vehiculo,
     required this.placa,
     required this.ingreso,
@@ -43,30 +51,71 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   final TextEditingController _costoController = TextEditingController(); //Valor por defecto sin servicios
   
   //Serivicios
+  //Servicio Seleccionado
   final List<Servicio> _servicio=[];
   final TextEditingController textValor = TextEditingController();
   //final ImagePicker _picker = ImagePicker();
-  //Servicio Seleccionado
-  final List <OrdenServicio> _serviciosSeleccionados = [];
+  //final List <OrdenServicio> _serviciosSeleccionados = [];
   final ServicioService servicioService = ServicioService();
   //Listado de servicios
   List<Servicio> _serviciosDisponibles = [];
   bool _cargandoServicios = true;
 
+  Vehiculo? vehiculo;
+  int? idVehiculo;
+  Orden? orden;
+  String? idOrden;
+  
+  bool cargando = true;
+
+  /// Inicialización del estado del widget lista los servicios registrados 
   @override
   void initState() {
     super.initState();
     debugPrint('🔥 initState ejecutado');
+    _init();
     listarServicios();
+  }
+
+  // Inicialización asincrónica
+  // Busca el vehículo para obtener id y carga la orden asociada a ese vehículo con el cliente
+  Future<void> _init() async {
+    await buscarVehiculo();   // ⏳ espera a que termine
+    await cargarOrden();      
+  }
+
+  Future<void> buscarVehiculo() async {
+    vehiculo = await VehiculoApi().buscarVehiculo(widget.placa);
+    setState(() {
+      idVehiculo = vehiculo != null ? vehiculo!.id : null;
+    });
+  }
+  
+  Future<void> cargarOrden() async {
+  final result = await OrdenService()
+    .buscarUltimaOrden(widget.numId, idVehiculo);
+
+    setState(() {
+      orden = result;
+      idOrden = result?.id;
+
+      if (idOrden != null) {
+        debugPrint('✅ Orden cargada con ID: $idOrden');
+      } else {
+        debugPrint('⚠️ No se encontró ninguna orden');
+      }
+
+      cargando = false;
+    });
   }
 
   Future<void> listarServicios() async {
     try {
-       final servicios = await servicioService.listarServicios();
+      final servicios = await servicioService.listarServicios();
 
-    setState(() {
-      _serviciosDisponibles = servicios;
-      _cargandoServicios = false;
+      setState(() {
+        _serviciosDisponibles = servicios;
+        _cargandoServicios = false;
       });
     } catch (e) {
       debugPrint('Error cargando servicios: $e');
@@ -75,9 +124,6 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
       });
     }
   }
-
-
-
 //------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
   void eliminarProceso(int index) {
     setState(() {
@@ -89,14 +135,6 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     setState(() {
       _servicio.add(Servicio(nombre: p.nombre, precio: p.precio, descripcion: '', imagen: '',));
     });
-
-    // final ordenSerivicio = OrdenServicio(
-    //   ordens: p.nombre,
-    //   servicios: p.nombre,
-    //   cantidad: 0,
-    //   precio: p.valor,
-    //   subtotal: p.valor,
-    // );
   }
   
   void editarProceso(int index) {
@@ -196,12 +234,19 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-         if (_serviciosDisponibles.isEmpty) {
-        return const Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: CircularProgressIndicator()),
-        );
-      }
+        if (_cargandoServicios) {
+          return const Padding(
+            padding: EdgeInsets.all(24),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (_serviciosDisponibles.isEmpty) {
+          return const Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('No hay servicios disponibles'),
+          );
+        }
         return SafeArea(
           child: ListView.builder(
             //shrinkWrap: true,
@@ -283,14 +328,14 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     ),
 
                     // Mostrar nombre del archivo si existe
-                    if (servicio.imagen.isNotEmpty) ...[
+                    if (servicio.imagen?.isNotEmpty == true) ...[
                       const SizedBox(height: 12),
                       Text(
                         "Imagen seleccionada:",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        servicio.imagen,
+                        servicio.imagen ?? '',
                         style: const TextStyle(color: Colors.grey),
                       )
                     ],
@@ -360,7 +405,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                   style: TextStyles.h4
                 ),
                 Text(
-                  DateFormat('dd/MM/yy HH:mm').format(widget.ingreso), //guarda la fecha de ingreso en .fechaIngreso
+                  DateFormat('dd/MM/yy HH:mm').format(widget.ingreso!), //guarda la fecha de ingreso en .fechaIngreso
                 ),
               ]),
               Column(
@@ -370,7 +415,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                   style: TextStyles.h4
                 ),
                 Text(
-                  formatFecha(widget.salidaEstimada), //guarda la fecha de ingreso en .fechaIngreso
+                  formatFecha(widget.salidaEstimada!), //guarda la fecha de ingreso en .fechaIngreso
                 )]
               ),
             ]

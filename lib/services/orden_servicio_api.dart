@@ -16,7 +16,7 @@ class OrdenServicioApi {
     );
 
     if (response.statusCode != 200 && response.statusCode != 201) {
-      throw Exception('Error al registrar servicio');
+      throw Exception('Error al registrar servicio en la orden');
     }
   }
 

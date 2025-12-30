@@ -55,10 +55,11 @@ class ApiService {
     debugPrint('Cuerpo de la respuesta: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
       return true;
     } else {
       debugPrint("Error: ${response.body}");
-      return false;
+      throw Exception("Error al crear la orden: ${response.body}");
     }
   }
 }
