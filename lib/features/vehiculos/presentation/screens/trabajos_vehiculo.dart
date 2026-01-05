@@ -273,9 +273,10 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   return _servicio.fold(0.0, (sum, item) => sum + item.precio);
   }
 
+  ///Boton de edicion de proceso
   void mostrarEdicionProceso(Servicio servicio) {
-    final valorController = TextEditingController(text: servicio.precio.toString());
-    final notasController = TextEditingController(text: servicio.descripcion);
+    final valorController = TextEditingController(text: servicio.precio.toString()); // valor de el servicio Seleccionado
+    final notasController = TextEditingController(text: servicio.descripcion);    // notas del servicio Seleccionado
 
     showDialog(
       context: context,
@@ -480,7 +481,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
             child: _servicio.isEmpty
             ? Center(
                 child: Text(
-                  'No hay trabajos agregados. Pulsa "Agregar trabajo".',
+                  'No hay trabajos agregados. Pulsa "+ Agregar servicio".',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               )
@@ -499,11 +500,20 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          /// Boton para editar servicio
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.orange),
                             onPressed: () {
                               debugPrint('Botón EDICION Servicios presionado');
                               mostrarEdicionProceso(servicio); // ← aquí se llama
+                            },
+                          ),
+                          /// Boton para eliminar servicio
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              debugPrint('Botón ELIMINAR Servicios presionado');
+                              eliminarProceso(index);
                             },
                           ),
                         ],

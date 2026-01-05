@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:talleres/model/orden_servi.dart';
 
 class OrdenServicioApi {
-  final String baseUrl = "http://10.0.2.2:8080"; // emulador
+  final String baseUrl = "http://192.168.1.223:8080"; // emulador
 
   /// 📤 Agregar servicio a orden
   Future<void> agregarServicio(OrdenServicio ordenServicio) async {

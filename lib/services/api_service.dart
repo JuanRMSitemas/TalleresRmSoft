@@ -8,8 +8,8 @@ import 'package:talleres/model/vehiculo.dart';
 import 'package:flutter/foundation.dart';
 
 class ApiService {
-  final String baseUrl = "http://10.0.2.2:8080"; // emulador
-  // final String baseUrl = "http://192.168.0.X:8080"; // Si usas celular real
+  final String baseUrl = "http://192.168.1.223:8080"; // para usar el celular real
+  // final String baseUrl = "http://10.0.2.2:8080"; // Usar en emulador
 
   ///Aqui se registra el cliente y el vehiculo el cual se relacioanara con la orden
   Future<bool> registrarClienteVehiculo(Vehiculo vehiculo, Cliente cliente) async {

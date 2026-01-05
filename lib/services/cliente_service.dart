@@ -5,7 +5,7 @@ import 'package:talleres/model/cliente.dart';
 
 //Aqui se busca los clientes ya registrados o existentes en la DB
 class ClienteService {
-  final String baseUrl = "http://10.0.2.2:8080"; // Si usas emulador
+  final String baseUrl = "http://192.168.1.223:8080"; // Si usas emulador
 
   Future<Cliente?> buscarCliente(String nit) async {
   final url = Uri.parse("$baseUrl/api/cliente/$nit");

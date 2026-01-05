@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:talleres/model/orden.dart';
 
 class OrdenService {
-  final String baseUrl = "http://10.0.2.2:8080"; // Si usas emulador
+  final String baseUrl = "http://192.168.1.223:8080"; // Si usas emulador
 
   Future<Orden?> buscarUltimaOrden(String nit, int? id) async {
   final url = Uri.parse("$baseUrl/api/orden/ultima/$nit/$id");
