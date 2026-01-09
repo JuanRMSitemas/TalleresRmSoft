@@ -11,6 +11,7 @@ import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.
 import 'package:image_picker/image_picker.dart';
 import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/services/orden_api.dart';
+import 'package:talleres/services/orden_servicio_api.dart';
 
 import 'package:talleres/services/servicio_service.dart';
 import 'package:talleres/services/vehiculo_api.dart';// ignore: unused_import
@@ -54,6 +55,9 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   //Servicio Seleccionado
   final List<Servicio> _servicio=[];
   final TextEditingController textValor = TextEditingController();
+  //Seleccion de proceso/trabajo para asignar a la orden
+  OrdenServicio? ordenServicio;
+
   //final ImagePicker _picker = ImagePicker();
   //final List <OrdenServicio> _serviciosSeleccionados = [];
   final ServicioService servicioService = ServicioService();
@@ -131,9 +135,24 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     });
   }
 
+/// Se cargaran los procesos o trabajos asignados a la orden para relacionarlos con la ordenServicio(orden_servi)
+  Future<void> cargarTrabajos() async{
+    final List<OrdenServicio> payload = _servicio.map((s) {
+    return OrdenServicio(
+      ordens: idOrden,        // 🔥 OBLIGATORIO
+      servicios: s.id,              // id del proceso
+      cantidad: 1, // cantidad fija 1
+      precio: s.precio,
+    );
+  }).toList();
+
+  await OrdenServicioApi().agregarServicio(payload);
+
+  }
+
   void agregarProceso(Servicio p) {
     setState(() {
-      _servicio.add(Servicio(nombre: p.nombre, precio: p.precio, descripcion: '', imagen: '',));
+      _servicio.add(Servicio(id: p.id, nombre: p.nombre, precio: p.precio, descripcion: '', imagen: '',));
     });
   }
   
@@ -227,7 +246,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
 
   /// Muestra el selector de categorías (BottomSheet)
   void mostrarSelectorProcesos() {
-    debugPrint('Servicios disponibles: ${_serviciosDisponibles.length}');
+    debugPrint('Servicios disponibles: ${_serviciosDisponibles.length}'); //imprime en consola la cantidad de servicios disponibles
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -241,7 +260,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
           );
         }
 
-        if (_serviciosDisponibles.isEmpty) {
+        if (_serviciosDisponibles.isEmpty) { //lista vacia
           return const Padding(
             padding: EdgeInsets.all(24),
             child: Text('No hay servicios disponibles'),
@@ -547,7 +566,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
             child: ElevatedButton.icon(
               onPressed: () async{
                 final bool? confirmar = await showDialog<bool>(
-                  context: context, 
+                  context: context,
                   builder: (context){
                     return AlertDialog(
                       title: const Text('Confirmación', style: TextStyles.alert,),
@@ -565,6 +584,8 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 );
                  // Verifica la respuesta del usuario
                 if (confirmar == true) {
+                  await cargarTrabajos();
+
                   Navigator.pushNamed(
                     context,
                     '/Abonar',
@@ -579,7 +600,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     }
                   );
                 }
-              },            
+              },
               icon: const Icon(Icons.task),
               label: const Text('Finalizar'),
               style: ElevatedButton.styleFrom(

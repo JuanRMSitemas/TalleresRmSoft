@@ -1,9 +1,9 @@
 class OrdenServicio {
   final int? id;
-  final String? ordens;
-  final String? servicios;
-  final int? cantidad;
-  final double? precio;
+  final String? ordens; //id de la orden
+  final String? servicios; //nombre del servicio
+  final int? cantidad;  //cantidad fija 1
+  final double? precio;  //valor del servicio
   final double? subtotal;
   //final String? imagenUrl;
 

@@ -1,5 +1,3 @@
-import 'package:talleres/model/cliente.dart';
-import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/model/orden_servi.dart';
 
 class Orden {
