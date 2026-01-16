@@ -1,7 +1,7 @@
 class OrdenServicio {
   final int? id;
   final String? ordens; //id de la orden
-  final String? servicios; //nombre del servicio
+  final String? servicios; //id del servicio
   final int? cantidad;  //cantidad fija 1
   final double? precio;  //valor del servicio
   final double? subtotal;
@@ -20,9 +20,9 @@ class OrdenServicio {
   //toma los datos por la api (backend)
   factory OrdenServicio.fromJson(Map<String, dynamic> json){
     return OrdenServicio(
-      id: json['id'], 
+      //id: json['id'], 
       ordens: json['orden'], 
-      servicios: json['servicio'], 
+      servicios: json['servicioCodigo'], 
       cantidad: json['cantidad'], 
       precio: json['precio'], 
       subtotal: json['subtotal'],
@@ -33,12 +33,12 @@ class OrdenServicio {
   //Envia datos al backend
   Map<String, dynamic> toJson(){
     return{
-      'id':id,
-      'orden':ordens,
-      'servicio': servicios,
-      'canidad': cantidad,
+      //'id':id,
+      //'orden':ordens,
+      'servicioCodigo': servicios,
+      'cantidad': cantidad,
       'precio': precio,
-      'subtotal':subtotal
+      'subtotal': subtotal
     };
   }
 }

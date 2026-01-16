@@ -7,22 +7,13 @@ class OrdenServicioApi {
   final String baseUrl = "http://192.168.1.223:8080"; // emulador
 
   /// 📤 Agregar servicio a orden
-  Future<void> agregarServicio(List<OrdenServicio> ordenServicio) async {
-    final url = Uri.parse("$baseUrl/api/orden_servi");
-
-    // final body= {
-    //   "id": ordenServicio.id,
-    //   "orden": ordenServicio.ordens,
-    //   "servicios": ordenServicio.servicios,
-    //   "cantidad": ordenServicio.cantidad,
-    //   "precio": ordenServicio.precio,
-    //   "subtotal": ordenServicio.subtotal,
-    // };
+  Future<void> agregarServicio(String ordenId, OrdenServicio ordenes) async {
+    final url = Uri.parse("$baseUrl/api/ordenes/$ordenId/servicios");
 
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(ordenServicio.map((e) => e.toJson()).toList()),
+      body: jsonEncode(ordenes.toJson()),
     );
     debugPrint('Cuerpo de la respuesta Orden de servicios: ${response.body}');
 

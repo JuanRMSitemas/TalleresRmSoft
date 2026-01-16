@@ -136,19 +136,21 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   }
 
 /// Se cargaran los procesos o trabajos asignados a la orden para relacionarlos con la ordenServicio(orden_servi)
-  Future<void> cargarTrabajos() async{
-    final List<OrdenServicio> payload = _servicio.map((s) {
-    return OrdenServicio(
-      ordens: idOrden,        // 🔥 OBLIGATORIO
-      servicios: s.id,              // id del proceso
-      cantidad: 1, // cantidad fija 1
+  Future<void> cargarTrabajos(String ordenId) async {
+  for (final s in _servicio) {
+    final payload = OrdenServicio(
+      servicios: s.id,
+      cantidad: 1,
       precio: s.precio,
+      subtotal: s.precio,
     );
-  }).toList();
 
-  await OrdenServicioApi().agregarServicio(payload);
-
+    await OrdenServicioApi().agregarServicio(
+      ordenId,
+      payload,
+    );
   }
+}
 
   void agregarProceso(Servicio p) {
     setState(() {
@@ -584,7 +586,8 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 );
                  // Verifica la respuesta del usuario
                 if (confirmar == true) {
-                  await cargarTrabajos();
+                  await cargarTrabajos(idOrden!); // Carga los trabajos a la orden
+                  debugPrint('Navegando a Abonar con servicios: $_servicio');
 
                   Navigator.pushNamed(
                     context,
