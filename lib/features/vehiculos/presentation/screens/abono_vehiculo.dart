@@ -257,7 +257,7 @@ class _AbonoScreenState extends State<AbonoScreen> {
                   );
 
                   await OrdenService().actualizarMedioPago(
-                    widget.ordenId, false,  orden.toJsonActualizar(),
+                    widget.ordenId, orden.toJsonActualizar(),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Orden actualizada correctamente')),
