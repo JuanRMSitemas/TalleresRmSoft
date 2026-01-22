@@ -112,33 +112,33 @@ class _AbonoScreenState extends State<AbonoScreen> {
             ]
           ),
           //Recuadro con Procesos realizados -------------
-          Expanded( // cuerpo de recuadro Servicios o Procesos
-            child: ListView.builder(
-              itemCount: widget.servicios.length,
-              itemBuilder: (context,index) {
-                final servicio = widget.servicios[index];
-                return Card(
-                  //margin: const EdgeInsets.symmetric(vertical: 5),
-                  elevation: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Nombre del servicio
-                        Expanded(
-                          flex: 2,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  servicio.nombre,
-                                  overflow: TextOverflow.ellipsis,
+            Expanded( // cuerpo de recuadro Servicios o Procesos
+              child: ListView.builder(
+                itemCount: widget.servicios.length,
+                itemBuilder: (context,index) {
+                  final servicio = widget.servicios[index];
+                  return Card(
+                    //margin: const EdgeInsets.symmetric(vertical: 5),
+                    elevation: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Nombre del servicio
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    servicio.nombre,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
                         Expanded(
                           flex: 1,
                           child: Row(

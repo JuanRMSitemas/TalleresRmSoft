@@ -11,6 +11,7 @@ class Orden {
   final String notasSalida;
   final String metodoPago;
   final double costo;
+  final String motivoIngreso;
 
   final String cliente;
   final String vehiculo;
@@ -27,6 +28,7 @@ class Orden {
     this.estado = true,
     this.notasIngreso = '',
     this.notasSalida = '',
+    this.motivoIngreso = '',
     this.metodoPago = '',
     this.costo = 0,
 
@@ -58,9 +60,9 @@ class Orden {
       estado: json['estado'] == 1 || json['estado'] == true,
       notasIngreso: json['notasIngreso'] ?? '',
       notasSalida: json['notasSalida'] ?? '',
-      metodoPago: json['metodoPago'] ?? '',
+      metodoPago: json['medioPago'] ?? '',
       costo: (json['total'] as num).toDouble(),
-
+      motivoIngreso: json['motivoIngreso'] ?? '',
       cliente: json['cliente'].toString(),
       vehiculo: json['vehiculo'].toString(),
 
@@ -82,8 +84,9 @@ class Orden {
       "estado": estado? 1 : 0,
       "notasIngreso": notasIngreso,
       "notasSalida": notasSalida,
-      "metodoPago": metodoPago,
+      "medioPago": metodoPago,
       "total": costo,
+      "motivoIngreso": motivoIngreso,
       
       "cliente":cliente,
       "vehiculo":vehiculo,

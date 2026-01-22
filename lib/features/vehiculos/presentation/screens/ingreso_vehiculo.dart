@@ -8,6 +8,7 @@ import 'package:talleres/model/vehiculo.dart';
 import 'package:talleres/model/orden.dart';
 import 'package:talleres/services/api_service.dart';
 import 'package:talleres/services/cliente_service.dart';
+import 'package:talleres/services/orden_api.dart';
 
 ///Aqui se registrar el vehiculo del cliente y a apartir de ahi se genera la orden la cual se ira complementando con los servicios agregados y su pago para dar salida al vehiculo
 class IngresoVehiculoScreen extends StatefulWidget {
@@ -133,11 +134,12 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         vehiculo: vehiculos.placa,
       );
 
+      final apiOrden = OrdenService();
       final api = ApiService();
 
       final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
 
-      final okOrden = await api.crearOrden(orden);
+      final okOrden = await apiOrden.crearOrden(orden);
       final idOrden = okOrden;// Obtener el ID de la orden creada
 
       

@@ -7,6 +7,41 @@ import 'package:talleres/model/orden.dart';
 class OrdenService {
   final String baseUrl = "http://192.168.1.223:8080"; // Si usas emulador
 
+  Future<bool> crearOrden(Orden orden) async {
+    final url = Uri.parse("$baseUrl/api/orden");
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(orden.toJson()),
+    );
+
+    debugPrint('Cuerpo de la respuesta: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      //final Map<String, dynamic> data = jsonDecode(response.body);
+      return true;
+    } else {
+      debugPrint("Error: ${response.body}");
+      throw Exception("Error al crear la orden: ${response.body}");
+    }
+  }
+
+  Future<bool> actualizarOrden(String ordenId) async {
+    final url = Uri.parse('$baseUrl/api/orden/$ordenId');
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'estado': 2
+      }),
+    );
+
+    return response.statusCode == 200;
+  }
+
+
   Future<Orden?> buscarUltimaOrden(String nit, int? id) async {
   final url = Uri.parse("$baseUrl/api/orden/ultima/$nit/$id");
   final response = await http.get(url);
@@ -20,4 +55,6 @@ class OrdenService {
     }
     throw Exception("Error al consultar la ultima Orden");
   }
+
+
 }

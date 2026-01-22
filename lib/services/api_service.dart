@@ -43,23 +43,5 @@ class ApiService {
   }
 
 
-  Future<bool> crearOrden(Orden orden) async {
-    final url = Uri.parse("$baseUrl/api/orden");
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(orden.toJson()),
-    );
-
-    debugPrint('Cuerpo de la respuesta: ${response.body}');
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      //final Map<String, dynamic> data = jsonDecode(response.body);
-      return true;
-    } else {
-      debugPrint("Error: ${response.body}");
-      throw Exception("Error al crear la orden: ${response.body}");
-    }
-  }
+  
 }

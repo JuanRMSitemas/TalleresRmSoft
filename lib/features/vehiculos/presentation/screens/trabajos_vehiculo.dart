@@ -128,14 +128,14 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
       });
     }
   }
-//------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
+  //------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
   void eliminarProceso(int index) {
     setState(() {
       _servicio.removeAt(index);
     });
   }
 
-/// Se cargaran los procesos o trabajos asignados a la orden para relacionarlos con la ordenServicio(orden_servi)
+  /// Se cargaran los procesos o trabajos asignados a la orden para relacionarlos con la ordenServicio(orden_servi)
   Future<void> cargarTrabajos(String ordenId) async {
   for (final s in _servicio) {
     final payload = OrdenServicio(
@@ -599,7 +599,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                       'ingreso': widget.ingreso,
                       'salidaEstimada': widget.salidaEstimada,
                       'servicios': _servicio, // 👈 pasa la lista actual de servicios
-                      'metodoPago': const [], // o la lista real que uses
+                      'metodoPago': '', // o la lista real que uses
                     }
                   );
                 }

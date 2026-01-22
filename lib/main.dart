@@ -45,9 +45,10 @@ class MyApp extends StatelessWidget
         ),        
       },
       onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/Abonar':
-            final args = settings.arguments as Map<String, dynamic>;
+        if (settings.name == '/Abonar') {
+          final args = settings.arguments as Map<String, dynamic>;
+          // case '/Abonar':
+          //   final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(
               builder: (_) => AbonoScreen(
                 nombre: args['nombre'],
@@ -56,25 +57,25 @@ class MyApp extends StatelessWidget
                 ingreso: args['ingreso'],
                 salidaEstimada: args['salidaEstimada'],
                 servicios: args['servicios'],
-                metodoPago:  List<String>.from(args['metodoPago']),
+                metodoPago:  args['metodoPago'],
               ),
             );
 
-          case '/reparacion':
-            final args = settings.arguments as Map<String, dynamic>;
-            return MaterialPageRoute(
-              builder: (_) => TrabajoScreen(
-                nombre: args['nombre'],
-                numId: args['numeroId'],
-                vehiculo: args['vehiculo'],
-                placa: args['placa'],
-                ingreso: args['ingreso'],
-                salidaEstimada: args['salidaEstimada'],
-                servicios: args['servicios'],
-                //metodoPago: args['metodoPago'],
-                costo: args['costo'],
-              ),
-            );
+          // case '/reparacion':
+          //   final args = settings.arguments as Map<String, dynamic>;
+          //   return MaterialPageRoute(
+          //     builder: (_) => TrabajoScreen(
+          //       nombre: args['nombre'],
+          //       numId: args['numeroId'],
+          //       vehiculo: args['vehiculo'],
+          //       placa: args['placa'],
+          //       ingreso: args['ingreso'],
+          //       salidaEstimada: args['salidaEstimada'],
+          //       servicios: args['servicios'],
+          //       //metodoPago: args['metodoPago'],
+          //       costo: args['costo'],
+          //     ),
+          //   );
         }
         return MaterialPageRoute(
           builder: (_) => const Scaffold(
