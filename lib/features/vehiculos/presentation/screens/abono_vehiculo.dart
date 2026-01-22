@@ -3,29 +3,33 @@ import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/buttons.dart'; 
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
+import 'package:talleres/model/orden.dart';
 import 'package:talleres/model/servicio.dart';
 //import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:intl/intl.dart';
 import 'package:talleres/desing/spacing_responsive.dart';
+import 'package:talleres/services/orden_api.dart';
 
 class AbonoScreen extends StatefulWidget {
+  final String ordenId; // ID de la orden a actualizar
   final String nombre;
   final String vehiculo;
   final String placa;
   final DateTime? ingreso;
   final DateTime? salidaEstimada;
+  final String metodoPago;
   final List<Servicio> servicios;
-  final List<String> metodoPago;
 
   const AbonoScreen({
     super.key,
+    required this.ordenId,
     required this.nombre,
     required this.vehiculo,
     required this.placa,
     required this.ingreso,
     required this.salidaEstimada,
-    required this.servicios,
     required this.metodoPago,
+    required this.servicios,
   });
 
   @override
@@ -239,17 +243,29 @@ class _AbonoScreenState extends State<AbonoScreen> {
             width: double.infinity,
             child: Buttons(
               text: 'Guardar',
-              onPressed: () {
-                if(metodoPagoSelec=='Seleccione un metodo de pago'){
+              onPressed: () async{
+                const placeholderPago = 'Seleccione el método de pago';
+                if(metodoPagoSelec == placeholderPago){
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Selecciona el metodo de pago')),
                   );
                   return;
                 }
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName('/'),
-                );
+                  final orden = Orden(
+                    id: widget.ordenId, // ✅ AHORA SÍ EXISTE
+                    metodoPago: metodoPagoSelec,
+                  );
+
+                  await OrdenService().actualizarMedioPago(
+                    widget.ordenId, false,  orden.toJsonActualizar(),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Orden actualizada correctamente')),
+                  );
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/'),
+                  );
               },
             ),
           ),

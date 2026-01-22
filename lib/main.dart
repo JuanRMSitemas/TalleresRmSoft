@@ -51,6 +51,7 @@ class MyApp extends StatelessWidget
           //   final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(
               builder: (_) => AbonoScreen(
+                ordenId: args['ordenId'],
                 nombre: args['nombre'],
                 vehiculo: args['vehiculo'],
                 placa: args['placa'],

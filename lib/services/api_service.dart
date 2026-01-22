@@ -1,11 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:talleres/model/cliente.dart';
-import 'package:talleres/model/orden.dart';
 import 'package:talleres/model/vehiculo.dart';
-
-import 'package:flutter/foundation.dart';
 
 class ApiService {
   final String baseUrl = "http://192.168.1.223:8080"; // para usar el celular real
@@ -36,12 +32,13 @@ class ApiService {
 
     if(response.statusCode == 200 || response.statusCode == 201) {
       return true;
-    } else {
-      debugPrint("Error: ${response.body}");
-      return false;
+    } 
+    else {
+      final error = jsonDecode(response.body);
+      final mensaje = error['message'] ?? 'Error inesperado';
+
+      throw Exception(mensaje);
     }
   }
 
-
-  
 }

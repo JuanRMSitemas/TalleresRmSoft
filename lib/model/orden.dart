@@ -95,4 +95,11 @@ class Orden {
 
     };
   }
+
+   // 🟢 JSON SOLO PARA ACTUALIZAR
+  Map<String, dynamic> toJsonActualizar() {
+    return {
+      'medioPago': metodoPago,
+    };
+  }
 }

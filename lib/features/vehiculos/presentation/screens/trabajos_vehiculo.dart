@@ -593,6 +593,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     context,
                     '/Abonar',
                     arguments: {
+                      'ordenId': idOrden!,
                       'nombre': widget.nombre,
                       'vehiculo': widget.vehiculo,
                       'placa': widget.placa,

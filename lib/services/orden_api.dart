@@ -41,6 +41,22 @@ class OrdenService {
     return response.statusCode == 200;
   }
 
+  Future<void> actualizarMedioPago(String ordenId, bool estado, Map<String, dynamic> body,
+  ) async {
+    final url = Uri.parse('$baseUrl/api/orden/$ordenId/medio-pago');
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al actualizar el medio de pago');
+    }
+  }
+
+
 
   Future<Orden?> buscarUltimaOrden(String nit, int? id) async {
   final url = Uri.parse("$baseUrl/api/orden/ultima/$nit/$id");

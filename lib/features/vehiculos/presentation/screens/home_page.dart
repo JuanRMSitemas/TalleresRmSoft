@@ -150,7 +150,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   salidaEstimada: ordenVehi.fechaEstimada,
                                   placa: transporte.placa,
                                   servicios: [],
-                                  metodoPago:[],
+                                  metodoPago: ordenVehi.metodoPago,
                                 ),
                                 'reparacion': TrabajoScreen(
                                   nombre: clienteV.nombre,

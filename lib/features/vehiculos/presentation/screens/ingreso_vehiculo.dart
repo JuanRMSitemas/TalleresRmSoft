@@ -48,7 +48,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
   final TextEditingController _marcaController = TextEditingController();
 
   //Orden controladores
-  DateTime _fechaSeleccionada  = DateTime.now();
+  DateTime? _fechaSeleccionada;
   final TextEditingController _notasController = TextEditingController();
   final TextEditingController _fechaController = TextEditingController();
 
@@ -129,7 +129,6 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         fechaEstimada: _fechaSeleccionada,
         estado: true,
         notasIngreso: _notasController.text,
-        //servicio: servicio.nombre 
         cliente: clientes.numeroId, 
         vehiculo: vehiculos.placa,
       );
@@ -137,18 +136,24 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
       final apiOrden = OrdenService();
       final api = ApiService();
 
-      final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
+      try{
+        final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
+        if(!okRegistro){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("error al registrar, verifique los datos"), backgroundColor: Colors.red)
+          );
+        }
+      }catch(e) { 
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+          ),
+        );
+      }
 
       final okOrden = await apiOrden.crearOrden(orden);
       final idOrden = okOrden;// Obtener el ID de la orden creada
-
-      
-
-      if(!okRegistro){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("error al registrar, verifique los datos"), backgroundColor: Colors.red)
-        );
-      }
 
       if (!okOrden) {
       ScaffoldMessenger.of(context).showSnackBar(
