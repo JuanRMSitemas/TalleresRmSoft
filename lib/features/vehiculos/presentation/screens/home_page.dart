@@ -144,6 +144,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                             onSelected: (value) {
                               final rutas = {
                                 'Abonar': AbonoScreen(
+                                  ordenId: ordenVehi.id ?? '',
                                   nombre: clienteV.nombre,
                                   vehiculo: transporte.tipo,
                                   ingreso: ordenVehi.fechaIngreso,
