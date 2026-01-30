@@ -123,11 +123,20 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         imagen: '',
       );
 
+      debugPrint('Fecha seleccionada: ${_fechaSeleccionada.toString()}');
+      if (_fechaSeleccionada == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debe seleccionar la fecha estimada')),
+        );
+        return;
+      }
+
       final orden = Orden( 
         fechaIngreso: DateTime.now(),
         fechaIngresoVehi: DateTime.now(), 
         fechaEstimada: _fechaSeleccionada,
         estado: true,
+        motivoIngreso: _servicioSelec,
         notasIngreso: _notasController.text,
         cliente: clientes.numeroId, 
         vehiculo: vehiculos.placa,
@@ -405,7 +414,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                   FocusScope.of(context).requestFocus(FocusNode()); // Cierra teclado
                   DateTime? fecha = await showDatePicker(
                     context: context,
-                    initialDate: _fechaSeleccionada,
+                    initialDate: _fechaSeleccionada ?? DateTime.now(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
                     locale: const Locale('es', 'ES'), // español
@@ -432,6 +441,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                     _fechaSeleccionada = fechaCompleta;
                     _fechaController.text =
                      '${fechaCompleta.day.toString().padLeft(2, '0')}/${fechaCompleta.month.toString().padLeft(2, '0')}/${fechaCompleta.year % 100}  ${hora.format(context)}';
+                     
+                    //debugPrint('Fecha seleccionada: $_fechaSeleccionada y $_fechaController');
                   });
                 },
               ),

@@ -72,5 +72,17 @@ class OrdenService {
     throw Exception("Error al consultar la ultima Orden");
   }
 
+  Future<List<Orden>> obtenerOrdenesTaller() async {
+    final url = Uri.parse('$baseUrl/api/orden/taller');
 
+    final response = await http.get(url);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final List data = jsonDecode(response.body);
+      debugPrint('📦 Ordenes recibidas: $data');
+      return data.map((e) => Orden.fromJson(e)).toList();
+    } else {
+      throw Exception('Error al cargar órdenes');
+    }
+  }
 }

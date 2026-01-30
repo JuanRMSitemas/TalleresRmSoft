@@ -4,6 +4,9 @@ import 'package:talleres/model/servicio.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/entregar_vehiculo.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';
+import 'package:talleres/services/cliente_service.dart';
+import 'package:talleres/services/orden_api.dart';
+import 'package:talleres/services/vehiculo_api.dart';
 import '../../../../model/vehiculo.dart';
 import 'ingreso_vehiculo.dart';
 import 'package:talleres/desing/date_extensions.dart';
@@ -21,7 +24,7 @@ class VehiculosScreen extends StatefulWidget {
 class VehiculosScreenState extends State<VehiculosScreen> {
   final List<Cliente> _cliente = [];
   final List<Vehiculo> _vehiculos = [];
-  final List<Orden> _orden = []; 
+  final List<Orden> _ordenes = []; 
   final List<Servicio> _servicio = [];
   int selectedIndex = 0;
 
@@ -34,7 +37,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
             setState(() {
               _cliente.add(cliente);
               _vehiculos.add(vehiculo);
-              _orden.add(orden);
+              _ordenes.add(orden);
               _servicio.add(servicio);
             });
           },
@@ -49,6 +52,47 @@ class VehiculosScreenState extends State<VehiculosScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatos();
+  }
+
+  Future<void> _cargarDatos() async {
+    try {
+      // LIMPIAMOS para evitar desfaces
+      _ordenes.clear();
+      _vehiculos.clear();
+      _cliente.clear();
+
+      final ordenes = await OrdenService().obtenerOrdenesTaller(); 
+      // 👆 este endpoint debe traer SOLO estado 1 y 2
+
+      for (final orden in ordenes) {
+        // Agregar la orden
+        _ordenes.add(orden);
+
+        // Trae el vehículo relacionado
+        final vehiculo = await VehiculoApi()
+            .buscarVehiculo(orden.vehiculo);
+        if (vehiculo != null) {
+          _vehiculos.add(vehiculo);
+        }
+
+        // Trae el cliente relacionado
+        final cliente = await ClienteService()
+            .buscarCliente(orden.cliente);
+        if (cliente != null) {
+          _cliente.add(cliente);
+        }
+      }
+
+      setState(() {});
+    } catch (e) {
+      debugPrint('Error cargando datos: $e');
+    }
+  }
+
  @override
   Widget build(BuildContext context) {
     return MainLayout(
@@ -59,8 +103,6 @@ class VehiculosScreenState extends State<VehiculosScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
-      //showDrawer: false,
-      // showBottomNav: true,
       body: tablavehiculos(),
     );
   }
@@ -70,9 +112,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
       padding: const EdgeInsets.all(0),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          //Calculamos ancho total disponible para repartir entre columnas
-          //double totalWidth = constraints.maxWidth; //411.428
-          //double colWidth = totalWidth / 5; // 4 columnas
+
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal, //permite desplazamiento lateral
             child: ConstrainedBox(
@@ -103,8 +143,11 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                   ]
                   : List.generate(_vehiculos.length, (index) {
                     final transporte = _vehiculos[index];
-                     final ordenVehi = _orden[index];
+                     final ordenVehi = _ordenes[index];
                      final clienteV = _cliente[index];
+
+                    //  : List.generate(_ordenes.length, (index) {
+                    //  final orden = _ordenes[index];
 
                     return DataRow(
                       cells: [
@@ -151,7 +194,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   salidaEstimada: ordenVehi.fechaEstimada,
                                   placa: transporte.placa,
                                   servicios: [],
-                                  metodoPago: ordenVehi.metodoPago,
+                                  metodoPago: ordenVehi.metodoPago ?? '',
                                 ),
                                 'reparacion': TrabajoScreen(
                                   nombre: clienteV.nombre,
@@ -165,6 +208,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   costo: ordenVehi.costo,
                                 ),
                                 'entregas': EntregarVehiculo(
+                                  ordenId: ordenVehi.id ?? '',
                                   nombre: clienteV.nombre,
                                   celular: clienteV.celular,
                                   correo: clienteV.email,
@@ -174,7 +218,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   placa: transporte.placa,
                                   servicios: [],
                                   metodoPago:[],
-                                  notas: ordenVehi.notasIngreso,
+                                  notas: ordenVehi.notasIngreso ?? '',
                                   valorTotal: 0,
                                 )
                               };

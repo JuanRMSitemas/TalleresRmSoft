@@ -7,11 +7,11 @@ class Orden {
   final DateTime? fechaEstimada;
   final DateTime? fechaEntrega; //fecha salida
   final bool estado;
-  final String notasIngreso;
-  final String notasSalida;
-  final String metodoPago;
+  final String? notasIngreso;
+  final String? notasSalida;
+  final String? metodoPago;
   final double costo;
-  final String motivoIngreso;
+  final String? motivoIngreso;
 
   final String cliente;
   final String vehiculo;
@@ -51,18 +51,15 @@ class Orden {
       id: json['id']?.toString(),
 
       fechaIngreso: DateTime.parse(json['fechaIngreso']),
-      fechaIngresoVehi: DateTime.parse(json['fechaIngresoVehi']),
-      fechaEstimada: DateTime.parse(json['fechaEstimada']),
-      fechaEntrega: json['fechaEntrega'] != null
-          ? DateTime.parse(json['fechaEntrega'])
-          : null,
-
+      fechaIngresoVehi: json['fechaIngresoVehi'] != null ? DateTime.parse(json['fechaIngresoVehi']) : null,
+      fechaEstimada: json['fechaEstimada'] != null ? DateTime.parse(json['fechaEstimada']) : null,
+      fechaEntrega: json['fechaEntrega'] != null ? DateTime.parse(json['fechaEntrega']) : null,
       estado: json['estado'] == 1 || json['estado'] == true,
-      notasIngreso: json['notasIngreso'] ?? '',
-      notasSalida: json['notasSalida'] ?? '',
-      metodoPago: json['medioPago'] ?? '',
+      notasIngreso: json['notasIngreso'] ?? 'sin notas', // acepta valores nulos
+      notasSalida: json['notasSalida'] ?? 'sin notas',
+      metodoPago: json['medioPago'] ?? 'sin definir',
       costo: (json['total'] as num).toDouble(),
-      motivoIngreso: json['motivoIngreso'] ?? '',
+      motivoIngreso: json['motivoIngreso'] ?? 'obligatorio',
       cliente: json['cliente'].toString(),
       vehiculo: json['vehiculo'].toString(),
 

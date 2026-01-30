@@ -21,11 +21,11 @@ class OrdenServicio {
   factory OrdenServicio.fromJson(Map<String, dynamic> json){
     return OrdenServicio(
       //id: json['id'], 
-      ordens: json['orden'], 
-      servicios: json['servicioCodigo'], 
-      cantidad: json['cantidad'], 
-      precio: json['precio'], 
-      subtotal: json['subtotal'],
+      ordens: json['orden']?.toString(), 
+      servicios: json['servicioCodigo']?.toString(), 
+      cantidad: json['cantidad']?.toInt(), 
+      precio: json['precio']?.toDouble(), 
+      subtotal: json['subtotal']?.toDouble(),
       //imagenUrl: json['imagenUrl']
     );
   }

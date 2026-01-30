@@ -6,9 +6,12 @@ import 'package:talleres/desing/buttons.dart';
 import 'package:talleres/desing/text_style.dart';
 import 'package:talleres/desing/date_extensions.dart'; //format para fecha
 import 'package:intl/intl.dart';
+import 'package:talleres/model/orden_servi.dart';
 import 'package:talleres/model/servicio.dart';
+import 'package:talleres/services/orden_servicio_api.dart';
 
 class EntregarVehiculo extends StatefulWidget {
+  final String ordenId;
   final String nombre;
   final String celular;
   final String correo;
@@ -23,6 +26,7 @@ class EntregarVehiculo extends StatefulWidget {
 
   const EntregarVehiculo({
     super.key,
+    required this.ordenId,
     required this.nombre,
     required this.celular,
     required this.correo,
@@ -54,6 +58,23 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   exportBackgroundColor: const Color.fromARGB(255, 255, 249, 211),
   );
   
+  List<OrdenServicio> _servicios = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarServicios();
+  }
+
+  Future<void> _cargarServicios() async {
+    final data = await OrdenServicioApi()
+      .listarPorOrden(widget.ordenId);
+  
+    setState(() {
+      _servicios = data;
+    });
+  }
+
   //get metodoPagoSelec => null;
 
   @override
@@ -67,7 +88,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   }
 
   Widget datosCliente() {
-  double total = _servicio.fold(0, (sum, p) => sum + p.precio);
+  double total = _servicios.fold(0, (sum, p) => sum + (p.precio ?? 0));
   final formato = NumberFormat("#,##0.00", "es_CO");
   //String metodoPagos = '';
 
@@ -196,9 +217,9 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: _servicio.length,
+                itemCount: _servicios.length,
                 itemBuilder: (context, index) {
-                  final servicio = _servicio[index];
+                  final servicio = _servicios[index];
                   return Card(
                     elevation: 1,
                     child: Padding(
@@ -208,14 +229,14 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              servicio.nombre,
+                              servicio.servicios ?? '',
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Expanded(
                             flex: 1,
                             child: Text(
-                              '\$ ${servicio.precio.toStringAsFixed(0)}',
+                              '\$ ${servicio.precio?.toStringAsFixed(0)}',
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
                             ),

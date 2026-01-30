@@ -16,7 +16,6 @@ import 'package:talleres/services/orden_servicio_api.dart';
 import 'package:talleres/services/servicio_service.dart';
 import 'package:talleres/services/vehiculo_api.dart';// ignore: unused_import
 
-
 class TrabajoScreen extends StatefulWidget {
   final String? idOrden;
   final String nombre;
@@ -91,7 +90,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   Future<void> buscarVehiculo() async {
     vehiculo = await VehiculoApi().buscarVehiculo(widget.placa);
     setState(() {
-      idVehiculo = vehiculo != null ? vehiculo!.id : null;
+      idVehiculo =idVehiculo = vehiculo?.id; // Asigna el ID del vehículo encontrado = vehiculo != null ? vehiculo!.id : null;
     });
   }
   
