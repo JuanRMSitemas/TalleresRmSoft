@@ -98,7 +98,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text( 'Taller', //nombre que se ingresa en el formulario
+            Text( 'Taller Automotriz', //nombre que se ingresa en el formulario
               style:  TextStyles.h1
             ),
             Text( 'CL 24 # 7-29', //nombre que se ingresa en el formulario
@@ -210,8 +210,8 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
             ExpansionTile(
             tilePadding: EdgeInsets.zero,
             title: const Text(
-              "",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              "-Procesos realizados",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 7, 26, 138)),
             ),
             children: [
               ListView.builder(
@@ -229,13 +229,13 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              servicio.servicios ?? '',
+                              servicio.nombreServ ?? 'Buscando...',
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Expanded(
                             flex: 1,
-                            child: Text(
+                            child: Text(  
                               '\$ ${servicio.precio?.toStringAsFixed(0)}',
                               textAlign: TextAlign.right,
                               overflow: TextOverflow.ellipsis,
@@ -287,7 +287,7 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
             //Notas
             TextFormField(
               controller:
-                _notasfinal, //----------------------------------------------XXXXXXXXXXXXXXXXXXX
+                _notasfinal, //----------------------------------------------XXXXXXXXXXXXXXXXXXX Agregar notas finales a orden
               decoration: const InputDecoration(
                 labelText: 'Notas',
                 border: OutlineInputBorder(),

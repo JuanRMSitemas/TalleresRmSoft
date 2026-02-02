@@ -138,6 +138,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   Future<void> cargarTrabajos(String ordenId) async {
   for (final s in _servicio) {
     final payload = OrdenServicio(
+      nombreServ: s.nombre,
       servicios: s.id,
       cantidad: 1,
       precio: s.precio,
