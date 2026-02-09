@@ -7,6 +7,8 @@ class Servicio {
   final String nombre;
   String descripcion;
   double precio;
+  //double? tarifa;
+  //bool? activo;
   String? imagen;
 
   Servicio({
@@ -14,6 +16,8 @@ class Servicio {
     required this.nombre,
     required this.descripcion,
     required this.precio,
+    //required this.tarifa,
+    //this.activo,
     this.imagen
   });
 
@@ -21,9 +25,11 @@ class Servicio {
     return Servicio(
       id:json['id'],
       nombre:json['nombre'],
-      descripcion: json['descripcion']?? 'this is error for juanSe',
+      descripcion: json['descripcion']?? 'this is error for juanSe isEmpty',
       precio: (json['precio'] as num).toDouble(),
-      imagen: json['imagen']?? '',
+      //tarifa: json['tarifa'] != null ? (json['tarifa'] as num).toDouble() : null,
+      //activo: json['activo'],
+      imagen: json['fotoUrl']?? '',
     );
   }
 
@@ -33,7 +39,9 @@ class Servicio {
       'nombre': nombre,
       'descripcion': descripcion,
       'precio': precio,
-      'imagen': imagen,
+      //'tarifa': tarifa,
+      //'activo': activo,
+      'fotoUrl': imagen,
     };
   }
 }

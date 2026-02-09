@@ -46,9 +46,6 @@ class EntregarVehiculo extends StatefulWidget {
   EntregarVehiculoState createState() => EntregarVehiculoState();
 }
 class EntregarVehiculoState extends State<EntregarVehiculo> {
-  // final List<Cliente> _cliente = [];
-  // final List<Vehiculo> _vehiculos = [];
-  // final List<Orden> _orden = []; 
   final List<Servicio> _servicio = [];
   
   final TextEditingController _notasfinal = TextEditingController();
@@ -90,7 +87,6 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
   Widget datosCliente() {
   double total = _servicios.fold(0, (sum, p) => sum + (p.precio ?? 0));
   final formato = NumberFormat("#,##0.00", "es_CO");
-  //String metodoPagos = '';
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -210,8 +206,8 @@ class EntregarVehiculoState extends State<EntregarVehiculo> {
             ExpansionTile(
             tilePadding: EdgeInsets.zero,
             title: const Text(
-              "-Procesos realizados",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 7, 26, 138)),
+              "Procesos realizados",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color.fromARGB(221, 7, 26, 138)),
             ),
             children: [
               ListView.builder(

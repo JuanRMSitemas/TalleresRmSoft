@@ -8,7 +8,7 @@ import 'package:talleres/model/vehiculo.dart';
 class VehiculoApi {
   final String baseUrl = "http://192.168.1.223:8080"; // Si usas emulador
 
-  Future<Vehiculo?> buscarVehiculo(String placa) async{
+  Future<Vehiculo?> buscarVehiculo(String placa) async{ // busca la id del vehiculo por la placa
     final url = Uri.parse("$baseUrl/api/vehiculo/$placa");
     final response = await http.get(url);
 

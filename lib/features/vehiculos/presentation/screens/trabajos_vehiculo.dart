@@ -17,7 +17,7 @@ import 'package:talleres/services/servicio_service.dart';
 import 'package:talleres/services/vehiculo_api.dart';// ignore: unused_import
 
 class TrabajoScreen extends StatefulWidget {
-  final String? idOrden;
+  final String ordenId;
   final String nombre;
   final String numId;
   final String vehiculo;
@@ -30,7 +30,7 @@ class TrabajoScreen extends StatefulWidget {
 
   const TrabajoScreen({
     super.key,
-    this.idOrden,
+    required this.ordenId,
     required this.nombre,
     required this.numId,
     required this.vehiculo,
@@ -50,17 +50,14 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   final formatoMoneda = NumberFormat('#,###', 'es_CO'); // 🇨🇴 formato colombiano 
   final TextEditingController _costoController = TextEditingController(); //Valor por defecto sin servicios
   
-  //Serivicios
   //Servicio Seleccionado
-  final List<Servicio> _servicio=[];
+  final List<Servicio> _servicio=[]; //aqui se registran los servicios seleccionados para luego pasarlos a la ordenServicio y relacionarlos con la orden
   final TextEditingController textValor = TextEditingController();
-  //Seleccion de proceso/trabajo para asignar a la orden
-  OrdenServicio? ordenServicio;
 
-  //final ImagePicker _picker = ImagePicker();
   //final List <OrdenServicio> _serviciosSeleccionados = [];
   final ServicioService servicioService = ServicioService();
   //Listado de servicios
+  List<OrdenServicio> _ordenServicios = [];
   List<Servicio> _serviciosDisponibles = [];
   bool _cargandoServicios = true;
 
@@ -75,25 +72,55 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('🔥 initState ejecutado');
+    _cargarServicios();
     _init();
     listarServicios();
   }
-
-  // Inicialización asincrónica
-  // Busca el vehículo para obtener id y carga la orden asociada a ese vehículo con el cliente
+  // Busca el vehículo para obtener id y carga la orden 
+  // asociada a ese vehículo con el cliente
   Future<void> _init() async {
     await buscarVehiculo();   // ⏳ espera a que termine
     await cargarOrden();      
   }
-
-  Future<void> buscarVehiculo() async {
-    vehiculo = await VehiculoApi().buscarVehiculo(widget.placa);
+  
+  //carga los servicios asociados a la orden para mostrarlos en la pantalla de trabajos
+  Future<void> _cargarServicios() async { 
+    final data = await OrdenServicioApi()
+      .listarPorOrden(widget.ordenId);
+  
     setState(() {
-      idVehiculo =idVehiculo = vehiculo?.id; // Asigna el ID del vehículo encontrado = vehiculo != null ? vehiculo!.id : null;
+      _ordenServicios = data;
+      debugPrint('✅ Servicios cargados: ${_ordenServicios.length}');
     });
   }
+
   
+
+  // carga los servicios disponibles para mostrarlos en el selector de servicios
+  Future<void> listarServicios() async { 
+    try {
+      final servicios = await servicioService.listarServicios();
+
+      setState(() {
+        _serviciosDisponibles = servicios;
+        _cargandoServicios = false;
+      });
+    } catch (e) {
+      debugPrint('Error cargando servicios: $e');
+      setState(() {
+        _cargandoServicios = false;
+      });
+    }
+  }
+
+  Future<void> buscarVehiculo() async { //obtiene el id del vehiculo a partir de la placa
+    vehiculo = await VehiculoApi().buscarVehiculo(widget.placa);
+    setState(() {
+      idVehiculo = idVehiculo = vehiculo?.id; // Asigna el ID del vehículo encontrado = vehiculo != null ? vehiculo!.id : null;
+    });
+  }
+  ///Aun que el id de la orden existe, se vueve a buscar la orden para obtener el id de la ordenServicio y 
+  ///relacionarlo con los servicios seleccionados, para luego pasarlos a la pantalla de abono
   Future<void> cargarOrden() async {
   final result = await OrdenService()
     .buscarUltimaOrden(widget.numId, idVehiculo);
@@ -111,22 +138,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
       cargando = false;
     });
   }
-
-  Future<void> listarServicios() async {
-    try {
-      final servicios = await servicioService.listarServicios();
-
-      setState(() {
-        _serviciosDisponibles = servicios;
-        _cargandoServicios = false;
-      });
-    } catch (e) {
-      debugPrint('Error cargando servicios: $e');
-      setState(() {
-        _cargandoServicios = false;
-      });
-    }
-  }
+  
   //------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
   void eliminarProceso(int index) {
     setState(() {
@@ -134,7 +146,8 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     });
   }
 
-  /// Se cargaran los procesos o trabajos asignados a la orden para relacionarlos con la ordenServicio(orden_servi)
+  /// Se cargaran los procesos o trabajos asignados a la orden para 
+  /// relacionarlos con la ordenServicio(orden_servi)
   Future<void> cargarTrabajos(String ordenId) async {
   for (final s in _servicio) {
     final payload = OrdenServicio(
@@ -244,7 +257,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
         );
       },
     );
-}
+  }
 
   /// Muestra el selector de categorías (BottomSheet)
   void mostrarSelectorProcesos() {
@@ -391,6 +404,102 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     );
   }
 
+  //Boton de edicion de proceso
+  void mostrarEdicionProcesos(OrdenServicio servicio) {
+    final valorController = TextEditingController(text: servicio.precio.toString()); // valor de el servicio Seleccionado
+    //final notasController = TextEditingController(text: servicio.descripcion);    // notas del servicio Seleccionado
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateModal) {
+            return AlertDialog(
+              title: Text("Editar servicio: ${servicio.nombreServ}"),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    // Campo valor
+                    TextField(
+                      controller: valorController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(labelText: "Valor"),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Campo notas
+                    TextField(
+                      //controller: notasController,
+                      maxLines: 3,
+                      decoration: const InputDecoration(labelText: "Notas"),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Botón seleccionar imagen
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? archivo = await picker.pickImage(
+                          source: ImageSource.gallery,
+                        );
+
+                        if (archivo != null) {
+                          final nombreArchivo = archivo.name; // ← solo el nombre
+
+                          setStateModal(() {
+                            servicio.imagenUrl = nombreArchivo; // solo 1 imagen
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.image),
+                      label: const Text("Seleccionar imagen"),
+                    ),
+
+                    // Mostrar nombre del archivo si existe
+                    if (servicio.imagenUrl?.isNotEmpty == true) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        "Imagen seleccionada:",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        servicio.imagenUrl ?? '',
+                        style: const TextStyle(color: Colors.grey),
+                      )
+                    ],
+                  ],
+                ),
+              ),
+
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancelar"),
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    // Guardar cambios en el servicio
+                    setState(() {
+                      servicio.precio = double.tryParse(valorController.text) ?? 0;
+                    });
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Guardar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainLayout(
@@ -402,6 +511,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   }
 
   Padding trabajosVehiculo(){
+    double total = _ordenServicios.fold(0, (sum, p) => sum + (p.precio ?? 0));
     double costoProc = 0;
     _costoController.text = costoProc.toString();
     return Padding(
@@ -464,7 +574,9 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
               child: Column(
                 children: [
                   Text(
-                    '\$ ${formatoMoneda.format(totalProcesos)}',
+                    totalProcesos == 0
+              ? '\$$total'
+              : '\$${formatoMoneda.format(totalProcesos)}',
                   style: TextStyles.h2Sub,
                   ),
                 ],
@@ -477,7 +589,6 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
               children: [
                 // Encabezado de la tabla
                 Row(
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: const [
                     Text(
                       'Proceso',
@@ -491,7 +602,6 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    //Padding(padding: EdgeInsetsGeometry.infinity())
                   ],
                 ),
               ]
@@ -499,50 +609,53 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
           ),
           
           Expanded(
-            child: _servicio.isEmpty
+            child:(_servicio.isEmpty && _ordenServicios.isEmpty)
             ? Center(
                 child: Text(
                   'No hay trabajos agregados. Pulsa "+ Agregar servicio".',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               )
-            : ListView.builder(
-                itemCount: _servicio.length,
-                itemBuilder: (context, index){
-                  final servicio = _servicio[index]; //se obtiene el objeto
+              : _servicio.isNotEmpty
+              ? _buildServicios()
+              : _buildOrdenServicios(),
+            // : ListView.builder(
+            //     itemCount: _servicio.isNotEmpty ? _servicio.length : _ordenServicios.length,
+            //     itemBuilder: (context, index){
+            //       final servicio = _servicio[index]; //se obtiene el objeto
+            //       final ordenServicios = _ordenServicios[index]; // para evitar problemas de estado en el ListView
+            //       return Card(
+            //         margin: const EdgeInsets.symmetric(vertical: 6),
+            //         child: ListTile(
+            //           title: Text(servicio.nombre == '' ? ordenServicios.nombreServ ?? 'Servicio sin nombre' : servicio.nombre), //muestra el nombre del servicio seleccionado o el nombre del servicio de la ordenServicio
+            //           subtitle: Text("Valor: \$${servicio.precio.toStringAsFixed(0)}"),
 
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      title: Text(servicio.nombre),
-                      subtitle: Text("Valor: \$${servicio.precio.toStringAsFixed(0)}"),
-
-                      // ÍCONOS
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          /// Boton para editar servicio
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.orange),
-                            onPressed: () {
-                              debugPrint('Botón EDICION Servicios presionado');
-                              mostrarEdicionProceso(servicio); // ← aquí se llama
-                            },
-                          ),
-                          /// Boton para eliminar servicio
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              debugPrint('Botón ELIMINAR Servicios presionado');
-                              eliminarProceso(index);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+            //           // ÍCONOS
+            //           trailing: Row(
+            //             mainAxisSize: MainAxisSize.min,
+            //             children: [
+            //               /// Boton para editar servicio
+            //               IconButton(
+            //                 icon: const Icon(Icons.edit, color: Colors.orange),
+            //                 onPressed: () {
+            //                   debugPrint('Botón EDICION Servicios presionado');
+            //                   mostrarEdicionProceso(servicio); // ← aquí se llama
+            //                 },
+            //               ),
+            //               /// Boton para eliminar servicio
+            //               IconButton(
+            //                 icon: const Icon(Icons.delete, color: Colors.red),
+            //                 onPressed: () {
+            //                   debugPrint('Botón ELIMINAR Servicios presionado');
+            //                   eliminarProceso(index);
+            //                 },
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       );
+            //     },
+            //   ),
           ),
           // ✅ Aquí usamos Expanded para que el ListView tenga espacio limitado dentro del Column
           
@@ -584,6 +697,9 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     );
                   }
                 );
+                ///En caso de de que ya exista servicios asignados, y se quiera visualizar todo
+                ///debe volver a home para  que se recargue la orden y se muestren los servicios asignados, 
+                ///esto se puede mejorar con un setState pero por ahora es la forma mas rapida de mostrar los servicios asignados a la orden
                  // Verifica la respuesta del usuario
                 if (confirmar == true) {
                   await cargarTrabajos(idOrden!); // Carga los trabajos a la orden
@@ -617,5 +733,82 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
         ],
      ),
     );
+  }
+  
+  Widget _buildServicios() {
+    return ListView.builder(
+    itemCount: _servicio.length,
+    itemBuilder: (context, index) {
+      final Servicio servicio = _servicio[index];
+
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        child: ListTile(
+          title: Text(servicio.nombre),
+          subtitle: Text("Valor: \$${servicio.precio.toStringAsFixed(0)}"),
+          // ÍCONOS
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Boton para editar servicio
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.orange),
+                onPressed: () {
+                  debugPrint('Botón EDICION Servicios presionado');
+                  mostrarEdicionProceso(servicio); // ← aquí se llama
+                },
+              ),
+              /// Boton para eliminar servicio
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  debugPrint('Botón ELIMINAR Servicios presionado');
+                  eliminarProceso(index);
+                },
+              ),
+            ],
+          ),
+        ),
+
+      );
+    },);
+  }
+
+  Widget _buildOrdenServicios() {
+  return ListView.builder(
+    itemCount: _ordenServicios.length,
+    itemBuilder: (context, index) {
+      final OrdenServicio ordenServicio = _ordenServicios[index];
+
+      return Card(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        child: ListTile(
+          title: Text(ordenServicio.nombreServ ?? 'Servicio'),
+          subtitle: Text("Valor: \$${ordenServicio.precio?.toStringAsFixed(0) ?? 0}"),
+          // ÍCONOS
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Boton para editar servicio
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.orange),
+                onPressed: () {
+                  debugPrint('Botón EDICION Servicios presionado');
+                  mostrarEdicionProcesos(ordenServicio); // ← aquí se llama
+                },
+              ),
+              /// Boton para eliminar servicio
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  debugPrint('Botón ELIMINAR Servicios presionado');
+                  eliminarProceso(index);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },);
   }
 }

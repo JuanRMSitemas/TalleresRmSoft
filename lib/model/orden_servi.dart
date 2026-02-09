@@ -4,9 +4,9 @@ class OrdenServicio {
   final String? servicios; //id del servicio
   final String? nombreServ; //nombre del servicio
   final int? cantidad;  //cantidad fija 1
-  final double? precio;  //valor del servicio
+  double? precio;  //valor del servicio
   final double? subtotal;
-  //final String? imagenUrl;
+  String? imagenUrl;
 
   OrdenServicio({
     this.id ,
@@ -16,7 +16,7 @@ class OrdenServicio {
     this.cantidad,
     this.precio,
     this.subtotal,
-    //this.imagenUrl,
+    this.imagenUrl,
   });
 
   //toma los datos por la api (backend)
@@ -29,7 +29,7 @@ class OrdenServicio {
       cantidad: json['cantidad']?.toInt(), 
       precio: json['precio']?.toDouble(), 
       subtotal: json['subtotal']?.toDouble(),
-      //imagenUrl: json['imagenUrl']
+      imagenUrl: json['imagenUrl']?? '',
     );
   }
 
@@ -42,7 +42,8 @@ class OrdenServicio {
       'nombreServicio': nombreServ,
       'cantidad': cantidad,
       'precio': precio,
-      'subtotal': subtotal
+      'subtotal': subtotal,
+      'imagen': imagenUrl,
     };
   }
 }

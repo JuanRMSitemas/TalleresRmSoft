@@ -82,7 +82,7 @@ class OrdenService {
       debugPrint('📦 Ordenes recibidas: $data');
       return data.map((e) => Orden.fromJson(e)).toList();
     } else {
-      throw Exception('Error al cargar órdenes');
+      throw Exception('Error al cargar órdenes - HOME_Flutter');
     }
   }
 }

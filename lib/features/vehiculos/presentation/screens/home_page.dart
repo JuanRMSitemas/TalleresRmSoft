@@ -197,6 +197,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                   metodoPago: ordenVehi.metodoPago ?? '',
                                 ),
                                 'reparacion': TrabajoScreen(
+                                  ordenId: ordenVehi.id ?? '',
                                   nombre: clienteV.nombre,
                                   numId: clienteV.numeroId,
                                   vehiculo: transporte.tipo,
