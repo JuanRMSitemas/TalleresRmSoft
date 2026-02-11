@@ -22,7 +22,7 @@ class TextStyles {
 
   static const TextStyle h5 = TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600);
 
-  static const TextStyle alert = TextStyle(color: Color.fromARGB(255, 187, 121, 0), fontSize: 20, fontWeight: FontWeight.w600);
+  static const TextStyle alert = TextStyle(color: Color.fromARGB(255, 173, 0, 0), fontSize: 20, fontWeight: FontWeight.w600);
 
 }
 

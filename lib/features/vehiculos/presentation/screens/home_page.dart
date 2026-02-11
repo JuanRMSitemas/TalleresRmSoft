@@ -18,7 +18,7 @@ class VehiculosScreen extends StatefulWidget {
   const VehiculosScreen({super.key});
 
   @override
-  VehiculosScreenState createState() => VehiculosScreenState();
+  State<VehiculosScreen> createState() => VehiculosScreenState();
 }
 
 class VehiculosScreenState extends State<VehiculosScreen> {
@@ -48,7 +48,17 @@ class VehiculosScreenState extends State<VehiculosScreen> {
 
   void _eliminarVehiculo(int index) {
     setState(() {
-      _vehiculos.removeAt(index);
+      OrdenService().eliminarOrden(_ordenes[index].id!); // Elimina la orden del backend
+      _recargarVehiculos(); // Recarga los datos para reflejar los cambios
+    });
+  }
+
+  Future<void> _recargarVehiculos() async {
+    // Simula delay o llamada real
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(() {
+      _cargarDatos(); // Vuelve a cargar los datos desde el inicio
     });
   }
 
@@ -103,7 +113,10 @@ class VehiculosScreenState extends State<VehiculosScreen> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
-      body: tablavehiculos(),
+      body: RefreshIndicator(
+        onRefresh: _recargarVehiculos,
+        child: tablavehiculos(),
+      ),
     );
   }
 
@@ -114,202 +127,220 @@ class VehiculosScreenState extends State<VehiculosScreen> {
         builder: (context, constraints) {
 
           return SingleChildScrollView(
-            scrollDirection: Axis.horizontal, //permite desplazamiento lateral
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraints.maxWidth, //asegura que la tabla tenga mínimo el ancho de la pantalla
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical, //permite scroll vertical si hay muchas filas
-                child: DataTable(
-                  columnSpacing: 0, // Espacio entre columnas (puedes ajustar)
-                  columns: const [
-                    DataColumn(label: Text('Placa',style: TextStyles.h4,)),
-                    DataColumn(label: Text('Vehículo',style: TextStyles.h4,)),
-                    DataColumn(label: Text('Ingreso',style: TextStyles.h4,)),
-                    DataColumn(label: Text('Estado',style: TextStyles.h4,)),
-                    DataColumn(label: Text('')),
-                  ],
-                  rows: _vehiculos.isEmpty
-                  ? [
-                    const DataRow(
-                      cells: [
-                      DataCell(Text('____')),
-                      DataCell(Text('____')),
-                      DataCell(Text('____')),
-                      DataCell(Text('____')),
-                      DataCell(Text('____')),
-                    ]),
-                  ]
-                  : List.generate(_vehiculos.length, (index) {
-                    final transporte = _vehiculos[index];
-                     final ordenVehi = _ordenes[index];
-                     final clienteV = _cliente[index];
-
-                    //  : List.generate(_ordenes.length, (index) {
-                    //  final orden = _ordenes[index];
-
-                    return DataRow(
-                      cells: [
-                      //Placa
-                      DataCell(
-                        SizedBox(
-                        child: Text(
-                          transporte.placa,
-                          overflow: TextOverflow.ellipsis, //evita que el texto se salga
-                          maxLines: 1,
-                        ),
-                      )),
-                      //tipo de vehiculo
-                      DataCell(
-                        SizedBox(
-                        // width: colWidth,
-                        child: Text(
-                          transporte.tipo,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      )),
-                      //columna de Fecha ingresp
-                      DataCell(
-                        SizedBox(
-                        // width: colWidth,
-                        child: Text(
-                          formatFecha(ordenVehi.fechaIngreso!), //guarda la fecha de ingreso en .fechaIngreso
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      )),
-                      // Aquí va la columna de estado
-                      DataCell(
-                        SizedBox(
-                          child: PopupMenuButton<String>(//-------------------------Valores ficticios
-                            onSelected: (value) {
-                              final rutas = {
-                                'Abonar': AbonoScreen(
-                                  ordenId: ordenVehi.id ?? '',
-                                  nombre: clienteV.nombre,
-                                  vehiculo: transporte.tipo,
-                                  ingreso: ordenVehi.fechaIngreso,
-                                  salidaEstimada: ordenVehi.fechaEstimada,
-                                  placa: transporte.placa,
-                                  servicios: [],
-                                  metodoPago: ordenVehi.metodoPago ?? '',
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth, //asegura que la tabla tenga mínimo el ancho de la pantalla
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical, //permite scroll vertical si hay muchas filas
+                  child: DataTable(
+                    columnSpacing: 0, // Espacio entre columnas (puedes ajustar)
+                    columns: const [
+                      DataColumn(label: Text('Placa',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Vehículo',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Ingreso',style: TextStyles.h4,)),
+                      DataColumn(label: Text('Estado',style: TextStyles.h4,)),
+                      DataColumn(label: Text('')),
+                    ],
+                    rows: _vehiculos.isEmpty
+                    ? [
+                      const DataRow(
+                        cells: [
+                        DataCell(Text('____')),
+                        DataCell(Text('____')),
+                        DataCell(Text('____')),
+                        DataCell(Text('____')),
+                        DataCell(Text('____')),
+                      ]),
+                    ]
+                    : List.generate(_vehiculos.length, (index) {
+                      final transporte = _vehiculos[index];
+                      final ordenVehi = _ordenes[index];
+                      final clienteV = _cliente[index];
+                      return DataRow(
+                        cells: [
+                        //Placa
+                        DataCell(
+                          SizedBox(
+                          child: Text(
+                            transporte.placa,
+                            overflow: TextOverflow.ellipsis, //evita que el texto se salga
+                            maxLines: 1,
+                          ),
+                        )),
+                        //tipo de vehiculo
+                        DataCell(
+                          SizedBox(
+                          // width: colWidth,
+                          child: Text(
+                            transporte.tipo,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        )),
+                        //columna de Fecha ingresp
+                        DataCell(
+                          SizedBox(
+                          // width: colWidth,
+                          child: Text(
+                            formatFecha(ordenVehi.fechaIngreso!), //guarda la fecha de ingreso en .fechaIngreso
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        )),
+                        // Aquí va la columna de estado
+                        DataCell(
+                          SizedBox(
+                            child: PopupMenuButton<String>(
+                              onSelected: (value) {
+                                final rutas = {
+                                  'Abonar': AbonoScreen(
+                                    ordenId: ordenVehi.id ?? '',
+                                    nombre: clienteV.nombre,
+                                    vehiculo: transporte.tipo,
+                                    ingreso: ordenVehi.fechaIngreso,
+                                    salidaEstimada: ordenVehi.fechaEstimada,
+                                    placa: transporte.placa,
+                                    servicios: [],
+                                    metodoPago: ordenVehi.metodoPago ?? '',
+                                  ),
+                                  'reparacion': TrabajoScreen(
+                                    ordenId: ordenVehi.id ?? '',
+                                    nombre: clienteV.nombre,
+                                    numId: clienteV.numeroId,
+                                    vehiculo: transporte.tipo,
+                                    ingreso: ordenVehi.fechaIngreso,
+                                    salidaEstimada: ordenVehi.fechaEstimada,
+                                    placa: transporte.placa,
+                                    servicios: [],
+                                    //metodoPago:[],
+                                    costo: ordenVehi.costo,
+                                  ),
+                                  'entregas': EntregarVehiculo(
+                                    ordenId: ordenVehi.id ?? '',
+                                    nombre: clienteV.nombre,
+                                    celular: clienteV.celular,
+                                    correo: clienteV.email,
+                                    vehiculo: transporte.tipo,
+                                    ingreso: ordenVehi.fechaIngreso,
+                                    salidaEstimada: ordenVehi.fechaEstimada!,
+                                    placa: transporte.placa,
+                                    servicios: [],
+                                    metodoPago:[],
+                                    notas: ordenVehi.notasIngreso ?? '',
+                                    valorTotal: 0,
+                                  )
+                                };
+                                final destino = rutas[value];
+                                if(destino != null){
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => destino),
+                                  );
+                                }
+                              },
+                              itemBuilder: (context) => [ //Opciones en Estado
+                                PopupMenuItem(
+                                  value: 'Abonar',
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.monetization_on, color: Color.fromARGB(255, 84, 150, 23),),
+                                      SizedBox(width: 4),
+                                      Text('Abonos')
+                                    ],
+                                  ),
                                 ),
-                                'reparacion': TrabajoScreen(
-                                  ordenId: ordenVehi.id ?? '',
-                                  nombre: clienteV.nombre,
-                                  numId: clienteV.numeroId,
-                                  vehiculo: transporte.tipo,
-                                  ingreso: ordenVehi.fechaIngreso,
-                                  salidaEstimada: ordenVehi.fechaEstimada,
-                                  placa: transporte.placa,
-                                  servicios: [],
-                                  //metodoPago:[],
-                                  costo: ordenVehi.costo,
+                                PopupMenuItem(
+                                  value: 'reparacion',
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.build , color: Color.fromARGB(166, 42, 91, 114)),
+                                      SizedBox(width: 4),
+                                      Text('Trabajos'),
+                                    ],
+                                  ),
                                 ),
-                                'entregas': EntregarVehiculo(
-                                  ordenId: ordenVehi.id ?? '',
-                                  nombre: clienteV.nombre,
-                                  celular: clienteV.celular,
-                                  correo: clienteV.email,
-                                  vehiculo: transporte.tipo,
-                                  ingreso: ordenVehi.fechaIngreso,
-                                  salidaEstimada: ordenVehi.fechaEstimada!,
-                                  placa: transporte.placa,
-                                  servicios: [],
-                                  metodoPago:[],
-                                  notas: ordenVehi.notasIngreso ?? '',
-                                  valorTotal: 0,
-                                )
-                              };
-                              final destino = rutas[value];
-                              if(destino != null){
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => destino),
-                                );
-                              }
-                            },
-                            itemBuilder: (context) => [ //Opciones en Estado
-                              PopupMenuItem(
-                                value: 'Abonar',
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.monetization_on, color: Color.fromARGB(255, 84, 150, 23),),
-                                    SizedBox(width: 4),
-                                    Text('Abonos')
-                                  ],
+                                PopupMenuItem(
+                                  value: 'entregas',
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.check_circle, color: Color.fromARGB(255, 62, 92, 224)),
+                                      SizedBox(width: 4),
+                                      Text('Finalizado')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                value: 'reparacion',
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.build , color: Color.fromARGB(166, 42, 91, 114)),
-                                    SizedBox(width: 4),
-                                    Text('Trabajos'),
-                                  ],
+                                PopupMenuItem(
+                                  value: 'Notificacion',
+                                  child: Row(
+                                    children: const [
+                                      Icon(Icons.notifications,  color: Color.fromARGB(255, 214, 148, 5)),
+                                      SizedBox(width: 4),
+                                      Text('Notificar')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                value: 'entregas',
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.check_circle, color: Color.fromARGB(255, 62, 92, 224)),
-                                    SizedBox(width: 4),
-                                    Text('Finalizado')
-                                  ],
+                              ],
+                              child: Container( //Resaltar de color segun el estado
+                                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: ordenVehi.estado
+                                      ? const Color.fromARGB(134, 255, 153, 0)
+                                      : const Color.fromARGB(125, 76, 175, 79),
+                                  borderRadius: BorderRadius.circular(6),
                                 ),
-                              ),
-                              PopupMenuItem(
-                                value: 'Notificacion',
-                                child: Row(
-                                  children: const [
-                                    Icon(Icons.notifications,  color: Color.fromARGB(255, 214, 148, 5)),
-                                    SizedBox(width: 4),
-                                    Text('Notificar')
-                                  ],
+                                child: Text( 
+                                  ordenVehi.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
+                                  style: TextStyle(
+                                    color: ordenVehi.estado  // true = En Taller (naranja), false = Listo (verde)
+                                        ? Colors.orange[900]
+                                        : Colors.green[900],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,  // Texto muy largo
+                                  textAlign: TextAlign.center,
                                 ),
-                              ),
-                            ],
-                            child: Container( //Resaltar de color segun el estado
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: ordenVehi.estado
-                                    ? const Color.fromARGB(134, 255, 153, 0)
-                                    : const Color.fromARGB(125, 76, 175, 79),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text( 
-                                ordenVehi.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
-                                style: TextStyle(
-                                  color: ordenVehi.estado  // true = En Taller (naranja), false = Listo (verde)
-                                      ? Colors.orange[900]
-                                      : Colors.green[900],
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                overflow: TextOverflow.ellipsis,  // Texto muy largo
-                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      // icono  para eliminar
-                      DataCell(
-                        SizedBox(
-                        // width: colWidth*0.1, //limita el ancho de cada columna
-                        child: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          tooltip: 'Eliminar',
-                          onPressed:(){
-                            _eliminarVehiculo(index);
-                          }
-                        ),
-                      )),
-                    ]);
-                  }),
+                        // icono  para eliminar
+                        DataCell(
+                          SizedBox(
+                          // width: colWidth*0.1, //limita el ancho de cada columna
+                          child: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            tooltip: 'Eliminar',
+                            onPressed:() async {
+                              final bool confirmacion = await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Confirmar eliminación', style: TextStyles.alert),
+                                  content: const Text('¿Estás seguro de que deseas eliminar este vehículo?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(false),
+                                      child: const Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(true),
+                                      child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                ),
+                              ) ?? false;
+                              if (confirmacion) {
+                                _eliminarVehiculo(index);
+                              }
+                            }
+                          ),
+                        )),
+                      ]);
+                    }),
+                  ),
                 ),
               ),
             ),

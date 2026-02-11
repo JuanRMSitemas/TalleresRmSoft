@@ -55,9 +55,6 @@ class OrdenService {
   }
 }
 
-
-
-
   Future<Orden?> buscarUltimaOrden(String nit, int? id) async {
   final url = Uri.parse("$baseUrl/api/orden/ultima/$nit/$id");
   final response = await http.get(url);
@@ -83,6 +80,19 @@ class OrdenService {
       return data.map((e) => Orden.fromJson(e)).toList();
     } else {
       throw Exception('Error al cargar órdenes - HOME_Flutter');
+    }
+  }
+
+  Future<void> eliminarOrden(String ordenId) async {
+    final url = Uri.parse('$baseUrl/api/orden/eliminar/$ordenId');
+
+    final response = await http.delete(url);
+
+    if (response.statusCode == 200 || response.statusCode == 204 || response.statusCode == 201) {
+      debugPrint('Orden eliminada correctamente');
+    } else {
+      debugPrintStack(label: 'Error al eliminar la orden: ${response.body}');
+      throw Exception('Error al eliminar la orden');
     }
   }
 }

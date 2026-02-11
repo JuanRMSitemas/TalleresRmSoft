@@ -684,7 +684,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                   context: context,
                   builder: (context){
                     return AlertDialog(
-                      title: const Text('Confirmación', style: TextStyles.alert,),
+                      title: const Text('Confirmación', style: TextStyles.alert),
                       content: const Text('¿Ha finalizado todos los servicios asignados?'),
                       actions: [
                         TextButton(

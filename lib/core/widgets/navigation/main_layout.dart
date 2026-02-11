@@ -26,7 +26,7 @@ class MainLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopAppBar(
-        title: title,
+        title:  title,
         showDrawer: showDrawer,
       ), //titulo de la vista
       drawer: showDrawer? const SideMenu(): null, //menu lateral
