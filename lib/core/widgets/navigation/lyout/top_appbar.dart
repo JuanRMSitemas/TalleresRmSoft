@@ -13,8 +13,7 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppBar(
         title: Text(
           title,
           style: TextStyles.scaffoldTitle,
@@ -22,20 +21,12 @@ class TopAppBar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
         //foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        
-        leading: showDrawer? 
-          Builder(
-              builder: (context) => IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer(),
-              ),
-            )
-          : null,
-      ),
-      drawer: showDrawer? const SideMenu(): null, //menu lateral
-    );
-    
-    
+        leading: showDrawer
+        ?IconButton(
+          onPressed: () => Scaffold.of(context).openDrawer(), 
+          icon:  const Icon(Icons.menu))
+        : null,
+      );
   }
 
   @override
