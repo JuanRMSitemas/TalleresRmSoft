@@ -135,7 +135,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
         fechaIngreso: DateTime.now(),
         fechaIngresoVehi: DateTime.now(), 
         fechaEstimada: _fechaSeleccionada,
-        estado: true,
+        placa: _placaController.text,
+        estado: 1, // Ingresado pero no se ha iniciado
         motivoIngreso: _servicioSelec,
         notasIngreso: _notasController.text,
         cliente: clientes.numeroId, 

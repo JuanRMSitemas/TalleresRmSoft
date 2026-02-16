@@ -28,6 +28,50 @@ class VehiculosScreenState extends State<VehiculosScreen> {
   final List<Servicio> _servicio = [];
   int selectedIndex = 0;
 
+  Color _colorPorEstado(int estado) {
+    switch (estado) {
+      case 1: // Ingreso
+        return const Color.fromARGB(133, 255, 28, 28); // rojo
+      case 2: // En proceso
+        return const Color.fromARGB(140, 255, 193, 7); // amarillo
+      case 3: // Finalizado
+        return const Color.fromARGB(140, 76, 175, 80); // verde
+      case 4: // Entregado
+        return const Color.fromARGB(140, 33, 150, 243); // azul
+      default:
+        return Colors.grey;
+    }
+  }
+  Color _colorEstado(int estado) {
+    switch (estado) {
+      case 1: // Ingreso
+        return const Color.fromARGB(133, 109, 0, 0); // rojo
+      case 2: // En proceso
+        return const Color.fromARGB(139, 128, 96, 0); // amarillo
+      case 3: // Finalizado
+        return const Color.fromARGB(139, 0, 124, 4); // verde
+      case 4: // Entregado
+        return const Color.fromARGB(139, 0, 57, 104); // azul
+      default:
+        return const Color.fromARGB(255, 53, 53, 53);
+    }
+  }
+
+  String _textoPorEstado(int estado) {
+  switch (estado) {
+    case 1:
+      return 'Por iniciar';
+    case 2:
+      return 'En proceso';
+    case 3:
+      return 'Fin Procesos';
+    case 4:
+      return 'Entregado';
+    default:
+      return 'Error';
+  }
+}
+
   void _agregarVehiculo() {
     Navigator.push(
       context,
@@ -201,10 +245,12 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     ordenId: ordenVehi.id ?? '',
                                     nombre: clienteV.nombre,
                                     vehiculo: transporte.tipo,
+                                    estado: ordenVehi.estado, // true = En Taller, false = Listo
                                     ingreso: ordenVehi.fechaIngreso,
                                     salidaEstimada: ordenVehi.fechaEstimada,
                                     placa: transporte.placa,
                                     servicios: [],
+                                    abono: ordenVehi.abono ?? 0,
                                     metodoPago: ordenVehi.metodoPago ?? '',
                                   ),
                                   'reparacion': TrabajoScreen(
@@ -212,6 +258,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     nombre: clienteV.nombre,
                                     numId: clienteV.numeroId,
                                     vehiculo: transporte.tipo,
+                                    estado: ordenVehi.estado, // true = En Taller, false = Listo
                                     ingreso: ordenVehi.fechaIngreso,
                                     salidaEstimada: ordenVehi.fechaEstimada,
                                     placa: transporte.placa,
@@ -224,6 +271,7 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                                     nombre: clienteV.nombre,
                                     celular: clienteV.celular,
                                     correo: clienteV.email,
+                                    estado: ordenVehi.estado, // 1 = En Taller
                                     vehiculo: transporte.tipo,
                                     ingreso: ordenVehi.fechaIngreso,
                                     salidaEstimada: ordenVehi.fechaEstimada!,
@@ -287,17 +335,14 @@ class VehiculosScreenState extends State<VehiculosScreen> {
                               child: Container( //Resaltar de color segun el estado
                                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: ordenVehi.estado
-                                      ? const Color.fromARGB(134, 255, 153, 0)
-                                      : const Color.fromARGB(125, 76, 175, 79),
+                                  color: _colorPorEstado(ordenVehi.estado),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: Text( 
-                                  ordenVehi.estado ? 'En Taller' : 'Listo', // Lógica del booleano: true = 'En Taller', false = 'Listo'
+
+                                child: Text(
+                                  _textoPorEstado(ordenVehi.estado),
                                   style: TextStyle(
-                                    color: ordenVehi.estado  // true = En Taller (naranja), false = Listo (verde)
-                                        ? Colors.orange[900]
-                                        : Colors.green[900],
+                                    color: _colorEstado(ordenVehi.estado),
                                     fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,  // Texto muy largo

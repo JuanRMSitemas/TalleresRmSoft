@@ -61,6 +61,16 @@ class OrdenServicioApi {
     }
   }
 
+    /// 🗑️ Eliminar servicio de la orden
+  Future<bool> eliminarServicio(String id, String codServ) async {
+    final url = Uri.parse("$baseUrl/api/ordenservicio/eliminarservordn/$id/$codServ");
 
+    final response = await http.delete(url);
 
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      return true;
+    } else {
+      throw Exception('Error al ELIMINAR servicio');
+    }
+  }
 }

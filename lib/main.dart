@@ -5,10 +5,6 @@ import 'package:talleres/features/vehiculos/presentation/screens/abono_vehiculo.
 import 'package:talleres/features/vehiculos/presentation/screens/home_page.dart';
 import 'package:talleres/features/vehiculos/presentation/screens/ingreso_vehiculo.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:talleres/model/cliente.dart'; // ignore: unused_import
-import 'package:talleres/model/vehiculo.dart';// ignore: unused_import
-import 'package:talleres/model/orden.dart';// ignore: unused_import
-import 'package:talleres/features/vehiculos/presentation/screens/trabajos_vehiculo.dart';// ignore: unused_import
 
 void main() {
   runApp(const MyApp());
@@ -47,36 +43,20 @@ class MyApp extends StatelessWidget
       onGenerateRoute: (settings) {
         if (settings.name == '/Abonar') {
           final args = settings.arguments as Map<String, dynamic>;
-          // case '/Abonar':
-          //   final args = settings.arguments as Map<String, dynamic>;
-            return MaterialPageRoute(
-              builder: (_) => AbonoScreen(
-                ordenId: args['ordenId'],
-                nombre: args['nombre'],
-                vehiculo: args['vehiculo'],
-                placa: args['placa'],
-                ingreso: args['ingreso'],
-                salidaEstimada: args['salidaEstimada'],
-                servicios: args['servicios'],
-                metodoPago:  args['metodoPago'],
-              ),
-            );
-
-          // case '/reparacion':
-          //   final args = settings.arguments as Map<String, dynamic>;
-          //   return MaterialPageRoute(
-          //     builder: (_) => TrabajoScreen(
-          //       nombre: args['nombre'],
-          //       numId: args['numeroId'],
-          //       vehiculo: args['vehiculo'],
-          //       placa: args['placa'],
-          //       ingreso: args['ingreso'],
-          //       salidaEstimada: args['salidaEstimada'],
-          //       servicios: args['servicios'],
-          //       //metodoPago: args['metodoPago'],
-          //       costo: args['costo'],
-          //     ),
-          //   );
+          return MaterialPageRoute(
+            builder: (_) => AbonoScreen(
+              ordenId: args['ordenId'],
+              nombre: args['nombre'],
+              estado: args['estado'], // 1 = En Taller
+              vehiculo: args['vehiculo'],
+              placa: args['placa'],
+              ingreso: args['ingreso'],
+              salidaEstimada: args['salidaEstimada'],
+              servicios: args['servicios'],
+              abono: args['abono'] ?? 0,
+              metodoPago:  args['metodoPago'],
+            ),
+          );
         }
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

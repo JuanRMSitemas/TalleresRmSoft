@@ -6,11 +6,13 @@ class Orden {
   final DateTime? fechaIngresoVehi;
   final DateTime? fechaEstimada;
   final DateTime? fechaEntrega; //fecha salida
-  final bool estado;
+  final String? placa;
+  final int estado;
   final String? notasIngreso;
   final String? notasSalida;
   final String? metodoPago;
   final double costo;
+  final double? abono;
   final String? motivoIngreso;
 
   final String cliente;
@@ -25,13 +27,14 @@ class Orden {
     this.fechaIngresoVehi,
     this.fechaEstimada,
     this.fechaEntrega,
-    this.estado = true,
+    this.placa,
+    this.estado = 1, // 1 para ingreso pero no se ha iniciado, 2 para inicio trabajos, 3 para finalizo trabajos, 4 para entregado, 5 para cancelado
     this.notasIngreso = '',
     this.notasSalida = '',
     this.motivoIngreso = '',
     this.metodoPago = '',
     this.costo = 0,
-
+    this.abono = 0,
     this.cliente = '',
     this.vehiculo = '',
     
@@ -54,11 +57,13 @@ class Orden {
       fechaIngresoVehi: json['fechaIngresoVehi'] != null ? DateTime.parse(json['fechaIngresoVehi']) : null,
       fechaEstimada: json['fechaEstimada'] != null ? DateTime.parse(json['fechaEstimada']) : null,
       fechaEntrega: json['fechaEntrega'] != null ? DateTime.parse(json['fechaEntrega']) : null,
-      estado: json['estado'] == 1 || json['estado'] == true,
+      placa: json['placa'] ?? 'sin placa',
+      estado: json['estado'], // 1 para ingreso pero no se ha iniciado, 2 para inicio trabajos, 3 para finalizo trabajos, 4 para entregado, 5 para cancelado
       notasIngreso: json['notasIngreso'] ?? 'sin notas', // acepta valores nulos
       notasSalida: json['notasSalida'] ?? 'sin notas',
       metodoPago: json['medioPago'] ?? 'sin definir',
       costo: (json['total'] as num).toDouble(),
+      abono: json['abono'] != null ? (json['abono'] as num).toDouble() : 0,
       motivoIngreso: json['motivoIngreso'] ?? 'obligatorio',
       cliente: json['cliente'].toString(),
       vehiculo: json['vehiculo'].toString(),
@@ -78,11 +83,13 @@ class Orden {
       "fechaIngresoVehi":fechaIngresoVehi?.toIso8601String(),
       "fechaEstimada": fechaEstimada?.toIso8601String(),
       "fechaEntrega": fechaEntrega?.toIso8601String(),
-      "estado": estado? 1 : 0,
+      "placa": placa,
+      "estado": estado,
       "notasIngreso": notasIngreso,
       "notasSalida": notasSalida,
       "medioPago": metodoPago,
       "total": costo,
+      "abono": abono,
       "motivoIngreso": motivoIngreso,
       
       "cliente":cliente,
@@ -97,6 +104,14 @@ class Orden {
   Map<String, dynamic> toJsonActualizar() {
     return {
       'medioPago': metodoPago,
+      'abono': abono,
+    };
+  }
+
+  // 🟢 JSON SOLO PARA ACTUALIZAR ESTADOS
+  Map<String, dynamic> toJsonActualizarEstado() {
+    return {
+      'estado': estado,
     };
   }
 }

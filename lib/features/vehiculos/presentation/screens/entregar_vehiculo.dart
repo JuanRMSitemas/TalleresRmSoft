@@ -15,6 +15,7 @@ class EntregarVehiculo extends StatefulWidget {
   final String nombre;
   final String celular;
   final String correo;
+  final int estado; // 1 = En Taller
   final String vehiculo;
   final String placa;
   final DateTime? ingreso;
@@ -30,6 +31,7 @@ class EntregarVehiculo extends StatefulWidget {
     required this.nombre,
     required this.celular,
     required this.correo,
+    required this.estado,
     required this.vehiculo,
     required this.placa,
     required this.ingreso,

@@ -21,6 +21,7 @@ class TrabajoScreen extends StatefulWidget {
   final String nombre;
   final String numId;
   final String vehiculo;
+  final int estado;
   final String placa;
   final DateTime? ingreso;
   final DateTime? salidaEstimada;
@@ -34,6 +35,7 @@ class TrabajoScreen extends StatefulWidget {
     required this.nombre,
     required this.numId,
     required this.vehiculo,
+    required this.estado,
     required this.placa,
     required this.ingreso,
     required this.salidaEstimada,
@@ -57,7 +59,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   //final List <OrdenServicio> _serviciosSeleccionados = [];
   final ServicioService servicioService = ServicioService();
   //Listado de servicios
-  List<OrdenServicio> _ordenServicios = [];
+  List<OrdenServicio> _ordenServicios = []; // aquí se cargan los servicios asociados a la orden para mostrarlos en la pantalla de trabajos, se obtiene de la base de datos a través de la ordenServicioApi y se muestra en la pantalla de trabajos, para luego relacionarlos con la ordenServicio y pasarlos a la pantalla de abono
   List<Servicio> _serviciosDisponibles = [];
   bool _cargandoServicios = true;
 
@@ -72,8 +74,8 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   @override
   void initState() {
     super.initState();
-    _cargarServicios();
     _init();
+    _cargarServicios();
     listarServicios();
   }
   // Busca el vehículo para obtener id y carga la orden 
@@ -95,7 +97,6 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   }
 
   
-
   // carga los servicios disponibles para mostrarlos en el selector de servicios
   Future<void> listarServicios() async { 
     try {
@@ -140,30 +141,50 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
   }
   
   //------------------------------------------------------------------------______________________________-------------------------------_________________________________________-------------
-  void eliminarProceso(int index) {
+  void eliminarProceso(String id, String index) {
     setState(() {
-      _servicio.removeAt(index);
+      OrdenServicioApi().eliminarServicio(id, index); // Elimina el servicio de la orden en la base de datos
+      //_ordenServicios.removeAt(index);
     });
   }
 
   /// Se cargaran los procesos o trabajos asignados a la orden para 
-  /// relacionarlos con la ordenServicio(orden_servi)
-  Future<void> cargarTrabajos(String ordenId) async {
-  for (final s in _servicio) {
-    final payload = OrdenServicio(
-      nombreServ: s.nombre,
-      servicios: s.id,
-      cantidad: 1,
-      precio: s.precio,
-      subtotal: s.precio,
+  /// Se cambia a estado 2 'En Proceso'
+  Future<void> cargarTrabajos(String ordenId) async { 
+
+    for (final s in _servicio) {
+      final payload = OrdenServicio(
+        nombreServ: s.nombre,
+        servicios: s.id,
+        cantidad: 1,
+        precio: s.precio,
+        subtotal: s.precio,
+      );
+
+      await OrdenServicioApi().agregarServicio(
+        ordenId,
+        payload,
+      ); 
+    }
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Lista de Trabajos Asignados"),backgroundColor: Colors.green,
+      ),
     );
 
-    await OrdenServicioApi().agregarServicio(
-      ordenId,
-      payload,
-    );
+    Navigator.pop(context); // Regresa a la pantalla anterior (Trabajos)
+    
   }
-}
+
+  Future<void> actualizarEstadoOrden(String ordenId, int estado) async {
+    if (estado == 1) {
+      await OrdenService().actualizarEstadosOdn(ordenId, {'estado': 2});
+    }
+    else if (estado == 2) {
+      await OrdenService().actualizarEstadosOdn(ordenId, {'estado': 3});
+    }
+  }
 
   void agregarProceso(Servicio p) {
     setState(() {
@@ -261,7 +282,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
 
   /// Muestra el selector de categorías (BottomSheet)
   void mostrarSelectorProcesos() {
-    debugPrint('Servicios disponibles: ${_serviciosDisponibles.length}'); //imprime en consola la cantidad de servicios disponibles
+    actualizarEstadoOrden(idOrden!, widget.estado); // Actualiza el estado de la orden a "En Proceso" al mostrar el selector de servicios
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -500,6 +521,20 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     );
   }
 
+  Future<void> _recargarVehiculos() async {
+    // Simula delay o llamada real
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    try {
+      // LIMPIAMOS para evitar desfaces
+      _ordenServicios.clear();
+
+      _cargarServicios(); // recarga los servicios asociados a la orden para mostrarlos en la pantalla de trabajos
+    } catch (e) {
+      debugPrint('Error cargando datos: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MainLayout(
@@ -617,55 +652,36 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 ),
               )
               : _servicio.isNotEmpty
-              ? _buildServicios()
-              : _buildOrdenServicios(),
-            // : ListView.builder(
-            //     itemCount: _servicio.isNotEmpty ? _servicio.length : _ordenServicios.length,
-            //     itemBuilder: (context, index){
-            //       final servicio = _servicio[index]; //se obtiene el objeto
-            //       final ordenServicios = _ordenServicios[index]; // para evitar problemas de estado en el ListView
-            //       return Card(
-            //         margin: const EdgeInsets.symmetric(vertical: 6),
-            //         child: ListTile(
-            //           title: Text(servicio.nombre == '' ? ordenServicios.nombreServ ?? 'Servicio sin nombre' : servicio.nombre), //muestra el nombre del servicio seleccionado o el nombre del servicio de la ordenServicio
-            //           subtitle: Text("Valor: \$${servicio.precio.toStringAsFixed(0)}"),
-
-            //           // ÍCONOS
-            //           trailing: Row(
-            //             mainAxisSize: MainAxisSize.min,
-            //             children: [
-            //               /// Boton para editar servicio
-            //               IconButton(
-            //                 icon: const Icon(Icons.edit, color: Colors.orange),
-            //                 onPressed: () {
-            //                   debugPrint('Botón EDICION Servicios presionado');
-            //                   mostrarEdicionProceso(servicio); // ← aquí se llama
-            //                 },
-            //               ),
-            //               /// Boton para eliminar servicio
-            //               IconButton(
-            //                 icon: const Icon(Icons.delete, color: Colors.red),
-            //                 onPressed: () {
-            //                   debugPrint('Botón ELIMINAR Servicios presionado');
-            //                   eliminarProceso(index);
-            //                 },
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       );
-            //     },
-            //   ),
+              ? _buildServicios() ///servicios asignados pero sin guardar en la orden.
+              : _buildOrdenServicios(), ///muestra los servicios ya asociados y finalizados a la orden.
           ),
           // ✅ Aquí usamos Expanded para que el ListView tenga espacio limitado dentro del Column
           
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                await cargarTrabajos(idOrden!); // Carga los trabajos a la orden
+              },
+              icon: const Icon(Icons.save),
+              label: const Text('Cargar Trabajos'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 2, 121, 61),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 4,
+          ),
           // Botón para agregar servicios --++--
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: mostrarSelectorProcesos,
               icon: const Icon(Icons.add),
-              label: const Text('Agregar servicio'),
+              label: const Text('Seleccionar Trabajo'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,
@@ -697,20 +713,19 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                     );
                   }
                 );
-                ///En caso de de que ya exista servicios asignados, y se quiera visualizar todo
-                ///debe volver a home para  que se recargue la orden y se muestren los servicios asignados, 
-                ///esto se puede mejorar con un setState pero por ahora es la forma mas rapida de mostrar los servicios asignados a la orden
-                 // Verifica la respuesta del usuario
+                
+                // Verifica la respuesta del usuario
                 if (confirmar == true) {
-                  await cargarTrabajos(idOrden!); // Carga los trabajos a la orden
+                  await actualizarEstadoOrden(idOrden!, widget.estado); // Actualiza el estado de la orden a "En Proceso"
                   debugPrint('Navegando a Abonar con servicios: $_servicio');
-
+                   
                   Navigator.pushNamed(
                     context,
                     '/Abonar',
                     arguments: {
                       'ordenId': idOrden!,
                       'nombre': widget.nombre,
+                      'estado': widget.estado, // 1 = En Taller
                       'vehiculo': widget.vehiculo,
                       'placa': widget.placa,
                       'ingreso': widget.ingreso,
@@ -735,7 +750,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     );
   }
   
-  Widget _buildServicios() {
+  Widget _buildServicios() { ///servicios asignados pero sin guardar en la orden.
     return ListView.builder(
     itemCount: _servicio.length,
     itemBuilder: (context, index) {
@@ -763,7 +778,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
                   debugPrint('Botón ELIMINAR Servicios presionado');
-                  eliminarProceso(index);
+                  eliminarProceso(widget.ordenId, servicio.id!); // Elimina el servicio de la orden en la base de datos
                 },
               ),
             ],
@@ -774,7 +789,7 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
     },);
   }
 
-  Widget _buildOrdenServicios() {
+  Widget _buildOrdenServicios() { //muestra los servicios ya asociados y finalizados a la orden.
   return ListView.builder(
     itemCount: _ordenServicios.length,
     itemBuilder: (context, index) {
@@ -800,9 +815,32 @@ class _TrabajoScreenState extends State<TrabajoScreen> {
               /// Boton para eliminar servicio
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  debugPrint('Botón ELIMINAR Servicios presionado');
-                  eliminarProceso(index);
+                onPressed: () async {
+                  final bool? confirmar = await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Confirmación', style: TextStyles.alert),
+                        content: const Text('¿Esta seguro de eliminar este servicio?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Sí'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                   // Verifica la respuesta del usuario
+                  if (confirmar == true) {
+                    debugPrint('Botón ELIMINAR Servicios presionado');
+                    eliminarProceso(widget.ordenId, ordenServicio.servicios!); // elimina servicio dentro de la orden.
+                    await _recargarVehiculos(); // recarga la lista de servicios para reflejar el cambio
+                  }
                 },
               ),
             ],

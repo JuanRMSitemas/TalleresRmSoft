@@ -15,7 +15,7 @@ class OrdenService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(orden.toJson()),
     );
-
+    debugPrint(jsonEncode(orden.toJson()));
     debugPrint('Cuerpo de la respuesta: ${response.body}');
 
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -42,7 +42,7 @@ class OrdenService {
   }
 
   Future<void> actualizarMedioPago(String ordenId,Map<String, dynamic> body,) async {
-  final url = Uri.parse('$baseUrl/api/orden/actualizar/$ordenId');
+  final url = Uri.parse('$baseUrl/api/orden/actualizarpago/$ordenId');
 
   final response = await http.put(
     url,
@@ -50,8 +50,10 @@ class OrdenService {
     body: jsonEncode(body),
   );
 
-  if (response.statusCode != 200) {
-    throw Exception('Error al actualizar el medio de pago');
+  if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+    debugPrint('Medio de pago actualizado correctamente');
+  } else {
+    throw Exception('Error al actualizar el medio de pago: ${response.body}');
   }
 }
 
@@ -93,6 +95,26 @@ class OrdenService {
     } else {
       debugPrintStack(label: 'Error al eliminar la orden: ${response.body}');
       throw Exception('Error al eliminar la orden');
+    }
+  }
+
+  Future<void> actualizarEstadosOdn(String ordenId, Map<String, dynamic> body) async {
+    final url = Uri.parse('$baseUrl/api/orden/estados/$ordenId');
+
+    if (body.isEmpty) {
+      throw Exception('-►Body vacío al actualizar estado');
+    }
+
+    final response = await http.put(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 204) {
+      debugPrint('✅ Estado de la orden actualizado correctamente');
+    } else {
+      throw Exception('Error al actualizar el estado de la orden ${response.body}');
     }
   }
 }
