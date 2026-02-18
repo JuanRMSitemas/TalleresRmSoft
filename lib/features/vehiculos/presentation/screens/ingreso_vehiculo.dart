@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:talleres/core/widgets/custom_scaffold.dart'; //se importa los Appbarrs
-import 'package:talleres/desing/app_colors.dart';
-// import 'package:intl/intl.dart';
-// import 'package:flutter/services.dart';
+import 'package:talleres/core/theme/app_colors.dart';
+import 'package:talleres/core/widgets/navigation/main_layout.dart';
 import 'package:talleres/desing/text_style.dart';
-import 'package:talleres/features/vehiculos/domain/cliente.dart';
-import 'package:talleres/features/vehiculos/domain/vehiculo.dart';
-import 'package:talleres/features/vehiculos/domain/orden_vehi.dart';
+import 'package:talleres/model/cliente.dart';
+import 'package:talleres/model/servicio.dart';
+import 'package:talleres/model/vehiculo.dart';
+import 'package:talleres/model/orden.dart';
+import 'package:talleres/services/api_service.dart';
+import 'package:talleres/services/cliente_service.dart';
+import 'package:talleres/services/orden_api.dart';
 
-
-
+///Aqui se registrar el vehiculo del cliente y a apartir de ahi se genera la orden la cual se ira complementando con los servicios agregados y su pago para dar salida al vehiculo
 class IngresoVehiculoScreen extends StatefulWidget {
+
   final void Function(
     Cliente cliente,
     Vehiculo vehiculo,
     Orden orden,
+    Servicio servicio,
   )
   onVehiculoIngresado;
 
@@ -27,68 +30,173 @@ class IngresoVehiculoScreen extends StatefulWidget {
 //Formulario de ingreso
 //Aqui se genera el formulario de ingreso del vehiculo
 class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
+  
   final _formKey = GlobalKey<FormState>();
+  //Cliente controladores
+  final List<String> _tiposId = ['CC', 'NIT', 'Otro'];
   String _tipoSelecId = "CC";
   final TextEditingController _numeroIdController = TextEditingController();
-  String _tipoSelecVehiculo = 'Carro';
-  final TextEditingController _placaController = TextEditingController();
   final TextEditingController _nombreController = TextEditingController();
-  final TextEditingController _celularController = TextEditingController();
   final TextEditingController _correoController = TextEditingController();
+  final TextEditingController _celularController = TextEditingController();
+
+  //Vehiculo controladores
+  String _tipoSelecVehiculo = 'Carro';
+  final List<String> _tiposVehiculos = ['Carro', 'Moto', 'Camión'];
+  final TextEditingController _placaController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _marcaController = TextEditingController();
-  String procesoSelec = 'Seleccione proceso';
-  DateTime _fechaSeleccionada  = DateTime.now();
+
+  //Orden controladores
+  DateTime? _fechaSeleccionada;
   final TextEditingController _notasController = TextEditingController();
-  final List<String> _tiposId = ['CC', 'NIT', 'Otro'];
-  final List<String> _tiposVehiculos = ['Carro', 'Moto', 'Camión'];
-  final List<String> _tipoProcesos = ['Seleccione proceso' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas'];
   final TextEditingController _fechaController = TextEditingController();
 
-  void _guardar() {
+  // //Servicio controladores
+  // final TextEditingController _idController =TextEditingController();
+  // final TextEditingController _nombreServicioController = TextEditingController(); //el nopmbre del servicio
+  // final TextEditingController _descripcionController = TextEditingController();
+  // final TextEditingController _precioController = TextEditingController();
+
+  //Procesos controladores
+  String _servicioSelec = 'Seleccione servicio';
+  final List<String> _tipoProcesos = ['Seleccione servicio' , 'Mantenimiento', 'Cambio de aceite', 'Calibracion de valvulas']; //Lista por defecto de motivo inicial
+
+  final ClienteService clienteService = ClienteService();
+  bool clienteExiste = false;
+
+  Future<void> buscarCliente(String nit) async {
+    final cliente = await clienteService.buscarCliente(nit);
+    String tipoDoc = "null";
+
+    if (cliente != null) {
+      if(_tipoSelecId == 'C'){
+        tipoDoc = 'CC';
+      } 
+      tipoDoc =cliente.tipoId;
+      _nombreController.text = cliente.nombre;
+      _correoController.text = cliente.email;
+      _celularController.text = cliente.celular;
+
+      setState(() {
+        clienteExiste = true;
+      });
+    } else {
+      _nombreController.clear();
+      _correoController.clear();
+      _celularController.clear();
+
+      setState(() {
+        clienteExiste = false;
+      });
+    }
+  }
+
+  Future<void> buscarVehiculo(String placa) async{
+
+  }
+
+  Future<void>  _guardar() async {
     if (_formKey.currentState!.validate()) {
 
-      final cliente = Cliente(
-        tipoId: _tipoSelecId,
+      final clientes = Cliente(
+        tipoId: _tipoSelecId.substring(0,1),
         numeroId: _numeroIdController.text,
         nombre: _nombreController.text,
         celular: _celularController.text,
         email: _correoController.text,
       );
 
-      final vehiculo = Vehiculo(
+      final vehiculos = Vehiculo(
         //fechaIngreso: DateTime.now(),
         tipo: _tipoSelecVehiculo,
         placa: _placaController.text,
         modelo: _modeloController.text,
         marca: _marcaController.text,
-        notasIngreso: _notasController.text,
+        //notasIngreso: _notasController.text,
       );
 
-      final orden = Orden(
-        //idOrden: ,
+      final servicio = Servicio(
+        nombre: _servicioSelec,
+        precio: 0,
+        descripcion: '',
+        imagen: '',
+      );
+
+      debugPrint('Fecha seleccionada: ${_fechaSeleccionada.toString()}');
+      if (_fechaSeleccionada == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debe seleccionar la fecha estimada')),
+        );
+        return;
+      }
+
+      final orden = Orden( 
         fechaIngreso: DateTime.now(),
-        posibleEntrega: _fechaSeleccionada,
-        notas: _notasController.text
+        fechaIngresoVehi: DateTime.now(), 
+        fechaEstimada: _fechaSeleccionada,
+        placa: _placaController.text,
+        estado: 1, // Ingresado pero no se ha iniciado
+        motivoIngreso: _servicioSelec,
+        notasIngreso: _notasController.text,
+        cliente: clientes.numeroId, 
+        vehiculo: vehiculos.placa,
       );
 
-      widget.onVehiculoIngresado(cliente, vehiculo, orden);
+      final apiOrden = OrdenService();
+      final api = ApiService();
+
+      try{
+        final okRegistro = await api.registrarClienteVehiculo(vehiculos, clientes);
+        if(!okRegistro){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("error al registrar, verifique los datos"), backgroundColor: Colors.red)
+          );
+        }
+      }catch(e) { 
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+          backgroundColor: Colors.red,
+          ),
+        );
+      }
+
+      final okOrden = await apiOrden.crearOrden(orden);
+      final idOrden = okOrden;// Obtener el ID de la orden creada
+
+      if (!okOrden) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error al crear la orden"),backgroundColor: Colors.red,
+        ),
+      );
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("1.Registro y orden creados correctamente"),
+        backgroundColor: Colors.green,
+      ),
+      );
+
+      widget.onVehiculoIngresado(clientes, vehiculos, orden, servicio);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("2.Ingresado a taller"), backgroundColor: Colors.blue),
+        );
+
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
+    return MainLayout(
       title: 'Ingresar Vehículo',
-      selectedIndex: 0, // índice del BottomNavigationBar
-      onTabSelected: (i) {
-        // Navegación desde el BottomNav
-        if (i == 0) Navigator.pushReplacementNamed(context, '/');
-        if (i == 1) Navigator.pushReplacementNamed(context, '/settings');
-      },
-
       body: bodyResult(),
+      showBottomNav: false,
+      showDrawer: false,
     );
   }
 
@@ -104,18 +212,16 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
               Row(
                 //tipo id - Nro id
                 children: [
-                  //tipo de id
+                    //TIPO DE ID
                   Expanded(
                     flex: 2, // Se ajusta el ancho relativo
                     child: DropdownButtonFormField<String>(
                       initialValue: _tipoSelecId,
                       hint: const Text('Seleccione el Id'),
-                      items: _tiposId
-                          .map(
-                            (tipo) =>
-                                DropdownMenuItem(value: tipo, child: Text(tipo)),
-                          )
-                          .toList(),
+                      items: _tiposId.map(
+                        (tipo) =>
+                        DropdownMenuItem(value: tipo, child: Text(tipo)),
+                      ).toList(),
                       onChanged: (value) {
                         setState(() => _tipoSelecId = value!);
                       },
@@ -125,9 +231,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                       ),
                     ),
                   ),
-
-                  const SizedBox(width: 10),
-
+                  const SizedBox(width: 10), //ESPACIADO
+                    ///NUMERO DE ID POR CLIENTE, BUSCA EL CLIENTE SI EXISTE APARTIR DE 6 DIGITOS
                   Expanded(
                     flex: 2,
                     child: TextFormField(
@@ -136,6 +241,11 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                         labelText: 'Número de ID',
                         border: OutlineInputBorder(),
                       ),
+                      onChanged: (value){
+                        if (value.length >=6){
+                          buscarCliente(value);
+                        }
+                      },
                       validator: (value) => value == null || value.isEmpty
                           ? 'Ingrese su número de ID'
                           : null,
@@ -144,10 +254,9 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                 ],
               ),
               const SizedBox(height: 16),
-
               Row(
                 children: [
-                  //Grupo "tipo de veiculo"
+                    //GRUPO DE  "TIPO DE VEHICULO"
                   Expanded(
                     flex: 2, // ajustar el ancho relativo
                     child: DropdownButtonFormField<String>(
@@ -269,22 +378,22 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
 
               //Procesos a  vehiculo
               DropdownButtonFormField<String>(
-                initialValue: procesoSelec,
-                hint: const Text('Servicios'),
+                initialValue: _servicioSelec,
+                hint: const Text(''),
                 items: _tipoProcesos
                     .map(
                       (tipo) => DropdownMenuItem(value: tipo, child: Text(tipo)),
                     )
                     .toList(),
                 onChanged: (value) {
-                  setState(() => procesoSelec = value!);
+                  setState(() => _servicioSelec = value!);
                 },
                 decoration: const InputDecoration(
-                  labelText: 'Seleccione un proceso',
+                  labelText: 'Seleccione un servicio',
                   border: OutlineInputBorder(),
                 ),
-                validator: (value) => value == 'Seleccione proceso'
-                    ? 'Seleccione un proceso'
+                validator: (value) => value == 'Seleccione servicio'
+                    ? 'Seleccione un servicio'
                     : null,
               ),
               const SizedBox(height: 10),
@@ -306,7 +415,7 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                   FocusScope.of(context).requestFocus(FocusNode()); // Cierra teclado
                   DateTime? fecha = await showDatePicker(
                     context: context,
-                    initialDate: _fechaSeleccionada,
+                    initialDate: _fechaSeleccionada ?? DateTime.now(),
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2100),
                     locale: const Locale('es', 'ES'), // español
@@ -333,6 +442,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                     _fechaSeleccionada = fechaCompleta;
                     _fechaController.text =
                      '${fechaCompleta.day.toString().padLeft(2, '0')}/${fechaCompleta.month.toString().padLeft(2, '0')}/${fechaCompleta.year % 100}  ${hora.format(context)}';
+                     
+                    //debugPrint('Fecha seleccionada: $_fechaSeleccionada y $_fechaController');
                   });
                 },
               ),
@@ -356,8 +467,8 @@ class _IngresoVehiculoScreenState extends State<IngresoVehiculoScreen> {
                   icon: const Icon(Icons.save),
                   label: const Text('Guardar vehículo'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.BackgroundButton,
-                    foregroundColor: AppColors.BackgrounLight,
+                    backgroundColor: AppColors.buttonGreen,
+                    foregroundColor: AppColors.backgrounLight,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 32,
                       vertical: 12,

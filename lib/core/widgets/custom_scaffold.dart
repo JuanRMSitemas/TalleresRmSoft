@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+//import 'package:talleres/core/widgets/navigation/bottom_scaffold.dart';
 //Aqui se crean los app bar y el menu de acciones 
 
 class CustomScaffold extends StatelessWidget {
   final String title;
   final Widget body;
-  final int selectedIndex;
-  final ValueChanged<int>? onTabSelected;
+  //final int selectedIndex;
+  //final ValueChanged<int>? onTabSelected;
+  final Widget ? bottomNavigationBar;
   final bool showDrawer;
+  final bool showBottomNav;
   final Widget? floatingActionButton; // 👈  parámetro
-
+//Relacionados con el bottom nav bar
+//buttom crea una nueva vista
   const CustomScaffold({
     super.key,
     required this.title,
     required this.body,
-    required this.selectedIndex,
-    this.onTabSelected,
+    //required this.selectedIndex,
+    //this.onTabSelected,
+    this.bottomNavigationBar,
     this.showDrawer = true,
+    this.showBottomNav = true,
     this.floatingActionButton, // 👈 también lo agregamos aquí
   });
 
@@ -25,15 +31,14 @@ class CustomScaffold extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           title,
-          // textAlign:TextAlign.center,
           style: TextStyle(
           fontWeight: FontWeight.bold
           ),
         ),
         backgroundColor: const Color.fromARGB(255, 0, 0, 0),
         foregroundColor: Colors.white,
-        leading: showDrawer
-        ? Builder(
+        leading: showDrawer? 
+        Builder(
             builder: (context) => IconButton(
               icon: const Icon(Icons.menu),
               onPressed: () => Scaffold.of(context).openDrawer(),
@@ -42,12 +47,12 @@ class CustomScaffold extends StatelessWidget {
         : null,
       ),
       drawer: showDrawer
-        ?Drawer(
+        ?Drawer( 
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
-                decoration: BoxDecoration(color: Color.fromARGB(255, 0, 0, 0)),
+                decoration: BoxDecoration(color: Color.fromARGB(255, 230, 187, 0)),
                 child: Text(
                   'Menú',
                   style: TextStyle(color: Colors.white, fontSize: 28),
@@ -58,7 +63,10 @@ class CustomScaffold extends StatelessWidget {
                 title: const Text('En Taller'),
                 onTap: () {
                   // Reemplaza para evitar apilar pantallas
-                  Navigator.pushReplacementNamed(context, '/');
+                  Navigator.popUntil(
+                    context,
+                    ModalRoute.withName('/'),
+                    );
                 },
               ),
               ListTile(
@@ -109,27 +117,8 @@ class CustomScaffold extends StatelessWidget {
         )
       : null,
       body: body,
-      floatingActionButton: 
-        floatingActionButton,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: (index) {
-          if (onTabSelected != null) onTabSelected!(index);
-          // Si quieres navegar por rutas desde el bottom nav, podrías:
-          // if (index == 0) Navigator.pushReplacementNamed(context, '/');
-        },
-        selectedItemColor: const Color.fromARGB(255, 103, 173, 82),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Inicio',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configuración',
-          ),
-        ],
-      ),
+      floatingActionButton: floatingActionButton,
+      bottomNavigationBar: showBottomNav ? const BottomAppBar() : null,
     );
   }
 }
